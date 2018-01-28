@@ -18,7 +18,7 @@
         $handle->image_resize = true;
         $handle->image_ratio_y = true;
         $handle->image_x = 1200;
-        $handle->Process('/data/configuration/beneluxspoor.org/images/');
+        $handle->Process('/data/configuration/images.beneluxspoor.net/images/');
 
         if ($handle->processed) {
             // Upload process succesfully
