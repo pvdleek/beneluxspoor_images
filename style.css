@@ -1,0 +1,28 @@
+fieldset.index {
+    width: 50%;
+    margin: 15px 0 25px 0;
+    padding: 15px;
+}
+fieldset.upload {
+    width: 80%;
+    margin: 15px 0 25px 0;
+    padding: 15px;
+}
+fieldset img {
+    float: right;
+}
+fieldset p {
+    font-size: 70%;
+    font-style: italic;
+}
+
+legend {
+    font-weight: bold;
+}
+
+.button {
+    text-align: right;
+}
+.button input {
+    font-weight: bold;
+}

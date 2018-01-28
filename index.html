@@ -1,31 +1,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>www.BeneluxSpoor.net foto upload</title>
-	<style>
-		fieldset {
-			width: 50%;
-			margin: 15px 0px 25px 0px;
-			padding: 15px;
-		}
-		legend {
-			font-weight: bold;
-			}
-		.button {
-			text-align: right;
-		}
-		.button input {
-			font-weight: bold;
-		}
-	</style>
+	<title>BeneluxSpoor foto upload</title>
+	<link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-	<fieldset>
+	<fieldset class="index">
 		<legend>www.BeneluxSpoor.net foto upload</legend>
 		<p>Kies een foto-bestand en klik op 'Upload'</p>
 		<p><a href="http://forum.beneluxspoor.net/index.php/topic,52398.0.html" target="_blank">Uitleg over de werking van deze plaatjes upload</a>.</p>
 		<p><strong>LET OP:</strong> Alleen uploaden van (model)spoor gerelateerde foto's en plaatjes is toegestaan!</p>
-		<form name="form" enctype="multipart/form-data" method="post" action="upload.php" />
+		<form name="form" enctype="multipart/form-data" method="post" action="upload.php">
 			<p><input type="file" size="32" name="bnls_image" value="" /></p>
 			<p class="button"><input type="hidden" name="action" value="image" />
 			<input type="submit" name="Submit" value="Upload" /></p>
