@@ -2,7 +2,7 @@
 // +------------------------------------------------------------------------+
 // | class.upload.php                                                       |
 // +------------------------------------------------------------------------+
-// | Copyright (c) Colin Verot 2003-2014. All rights reserved.              |
+// | Copyright (c) Colin Verot 2003-2018. All rights reserved.              |
 // | Email         colin@verot.net                                          |
 // | Web           http://www.verot.net                                     |
 // +------------------------------------------------------------------------+
@@ -1737,10 +1737,10 @@ class upload {
 
         $this->image_x                  = 150;
         $this->image_y                  = 150;
-        $this->image_ratio              = false;    // keeps aspect ratio with x and y dimensions
-        $this->image_ratio_crop         = false;    // keeps aspect ratio with x and y dimensions, filling the space
-        $this->image_ratio_fill         = false;    // keeps aspect ratio with x and y dimensions, fitting the image in the space, and coloring the rest
-        $this->image_ratio_pixels       = false;    // keeps aspect ratio, calculating x and y so that the image is approx the set number of pixels
+        $this->image_ratio              = false;    // keeps aspect ratio within x and y dimensions
+        $this->image_ratio_crop         = false;    // keeps aspect ratio within x and y dimensions, filling the space
+        $this->image_ratio_fill         = false;    // keeps aspect ratio within x and y dimensions, fitting the image in the space
+        $this->image_ratio_pixels       = false;    // keeps aspect ratio, calculating x and y to reach the number of pixels
         $this->image_ratio_x            = false;    // calculate the $image_x if true
         $this->image_ratio_y            = false;    // calculate the $image_y if true
         $this->image_ratio_no_zoom_in   = false;
@@ -2038,7 +2038,7 @@ class upload {
      */
     function upload($file, $lang = 'en_GB') {
 
-        $this->version            = '0.34dev';
+        $this->version            = '0.35dev';
 
         $this->file_src_name      = '';
         $this->file_src_name_body = '';
@@ -2169,7 +2169,10 @@ class upload {
                 $open_basedir = false;
             }
             $gd           = $this->gdversion() ? $this->gdversion(true) : 'GD not present';
-            $supported    = trim((in_array('png', $this->image_supported) ? 'png' : '') . ' ' . (in_array('jpg', $this->image_supported) ? 'jpg' : '') . ' ' . (in_array('gif', $this->image_supported) ? 'gif' : '') . ' ' . (in_array('bmp', $this->image_supported) ? 'bmp' : ''));
+            $supported    = trim((in_array('png', $this->image_supported) ? 'png' : '') . ' ' .
+                                 (in_array('jpg', $this->image_supported) ? 'jpg' : '') . ' ' .
+                                 (in_array('gif', $this->image_supported) ? 'gif' : '') . ' ' .
+                                 (in_array('bmp', $this->image_supported) ? 'bmp' : ''));
             $this->log .= '-&nbsp;class version           : ' . $this->version . '<br />';
             $this->log .= '-&nbsp;operating system        : ' . PHP_OS . '<br />';
             $this->log .= '-&nbsp;PHP version             : ' . PHP_VERSION . '<br />';
@@ -2486,7 +2489,10 @@ class upload {
                         if (empty($this->file_src_mime)) {
                             $this->log .= '&nbsp;&nbsp;&nbsp;&nbsp;MIME empty, guessing from type<br />';
                             $mime = (is_array($info) && array_key_exists(2, $info) ? $info[2] : null); // 1 = GIF, 2 = JPG, 3 = PNG
-                            $this->file_src_mime = ($mime==IMAGETYPE_GIF ? 'image/gif' : ($mime==IMAGETYPE_JPEG ? 'image/jpeg' : ($mime==IMAGETYPE_PNG ? 'image/png' : ($mime==IMAGETYPE_BMP ? 'image/bmp' : null))));
+                            $this->file_src_mime = ($mime==IMAGETYPE_GIF  ? 'image/gif' :
+                                                   ($mime==IMAGETYPE_JPEG ? 'image/jpeg' :
+                                                   ($mime==IMAGETYPE_PNG  ? 'image/png' :
+                                                   ($mime==IMAGETYPE_BMP  ? 'image/bmp' : null))));
                         }
                         $this->log .= '&nbsp;&nbsp;&nbsp;&nbsp;MIME type detected as ' . $this->file_src_mime . ' by PHP getimagesize() function<br />';
                         if (preg_match("/^([\.\w-]+)\/([\.\w-]+)(.*)$/i", $this->file_src_mime)) {
@@ -2701,6 +2707,45 @@ class upload {
         $slash = (strtolower(substr(PHP_OS, 0, 3)) === 'win' ? '\\' : '/');
         if (substr($dir, -1) != $slash) $dir = $dir . $slash;
         return $dir;
+    }
+
+    /**
+     * Sanitize a file name
+     *
+     * @access private
+     * @param  string  $filename File name
+     * @return string Sanitized file name
+     */
+    function sanitize($filename) {
+        // remove HTML tags
+        $filename = strip_tags($filename);
+        // remove non-breaking spaces
+        $filename = preg_replace("#\x{00a0}#siu", ' ', $filename);
+        // remove illegal file system characters
+        $filename = str_replace(array_map('chr', range(0, 31)), '', $filename);
+        // remove dangerous characters for file names
+        $chars = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "’", "%20",
+                       "+", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "%", "+", "^", chr(0));
+        $filename = str_replace($chars, '-', $filename);
+        // remove break/tabs/return carriage
+        $filename = preg_replace('/[\r\n\t -]+/', '-', $filename);
+        // convert some special letters
+        $convert = array('Þ' => 'TH', 'þ' => 'th', 'Ð' => 'DH', 'ð' => 'dh', 'ß' => 'ss',
+                         'Œ' => 'OE', 'œ' => 'oe', 'Æ' => 'AE', 'æ' => 'ae', 'µ' => 'u');
+        $filename = strtr($filename, $convert);
+        // remove foreign accents by converting to HTML entities, and then remove the code
+        $filename = html_entity_decode( $filename, ENT_QUOTES, "utf-8" );
+        $filename = htmlentities($filename, ENT_QUOTES, "utf-8");
+        $filename = preg_replace("/(&)([a-z])([a-z]+;)/i", '$2', $filename);
+        // clean up, and remove repetitions
+        $filename = preg_replace(array('/ +/', '/_+/', '/-+/'), '-', $filename);
+        $filename = preg_replace(array('/-*\.-*/', '/\.{2,}/'), '.', $filename);
+        // cut to 255 characters
+        $length = 255 - strlen($this->file_dst_name_ext) + 1;
+        $filename = extension_loaded('mbstring') ? mb_strcut($filename, 0, $length, mb_detect_encoding($filename)) : substr($filename, 0, $length);
+        // remove bad characters at start and end
+        $filename = trim($filename, '.-_');
+        return $filename;
     }
 
     /**
@@ -3114,10 +3159,8 @@ class upload {
                 $this->file_dst_name_body  = $this->file_name_body_pre . $this->file_dst_name_body;
                 $this->log .= '- file name body prepend : ' . $this->file_name_body_pre . '<br />';
             }
-            if ($this->file_safe_name) { // formats the name
-                $this->file_dst_name_body = utf8_encode(strtr(utf8_decode($this->file_dst_name_body), utf8_decode('ŠŽšžŸÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüýÿ'), 'SZszYAAAAAACEEEEIIIINOOOOOOUUUUYaaaaaaceeeeiiiinoooooouuuuyy'));
-                $this->file_dst_name_body = strtr($this->file_dst_name_body, array('Þ' => 'TH', 'þ' => 'th', 'Ð' => 'DH', 'ð' => 'dh', 'ß' => 'ss', 'Œ' => 'OE', 'œ' => 'oe', 'Æ' => 'AE', 'æ' => 'ae', 'µ' => 'u'));
-                $this->file_dst_name_body = preg_replace(array('/\s/', '/\.[\.]+/', '/[^\w_\.\-]/'), array('_', '.', ''), $this->file_dst_name_body);
+            if ($this->file_safe_name) { // sanitize the name
+                $this->file_dst_name_body = $this->sanitize($this->file_dst_name_body);
                 $this->log .= '- file name safe format<br />';
             }
 
@@ -3595,7 +3638,7 @@ class upload {
                         } else if ($this->image_ratio_no_zoom_out) {
                             $this->image_ratio = true;
                             $this->image_no_shrinking = true;
-                        } 
+                        }
 
                         // keeps aspect ratio with x calculated from y
                         if ($this->image_ratio_x) {
@@ -4405,11 +4448,11 @@ class upload {
                             $text_offset_y = 0;
                             $rect = imagettfbbox($this->image_text_size, $this->image_text_angle, $this->image_text_font, $text );
                             if ($rect) {
-                                $minX = min(array($rect[0],$rect[2],$rect[4],$rect[6])); 
-                                $maxX = max(array($rect[0],$rect[2],$rect[4],$rect[6])); 
-                                $minY = min(array($rect[1],$rect[3],$rect[5],$rect[7])); 
-                                $maxY = max(array($rect[1],$rect[3],$rect[5],$rect[7])); 
-                                $text_offset_x = abs($minX) - 1; 
+                                $minX = min(array($rect[0],$rect[2],$rect[4],$rect[6]));
+                                $maxX = max(array($rect[0],$rect[2],$rect[4],$rect[6]));
+                                $minY = min(array($rect[1],$rect[3],$rect[5],$rect[7]));
+                                $maxY = max(array($rect[1],$rect[3],$rect[5],$rect[7]));
+                                $text_offset_x = abs($minX) - 1;
                                 $text_offset_y = abs($minY) - 1;
                                 $text_width = $maxX - $minX + (2 * $this->image_text_padding_x);
                                 $text_height = $maxY - $minY + (2 * $this->image_text_padding_y);
