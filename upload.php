@@ -9,7 +9,7 @@
     <?php
 
     include('class.upload.php');
-    $handle = new upload($_FILES['bnls_image']);
+    $handle = new Verot\Upload\Upload($_FILES['bnls_image']);
     $im = imagecreatefromstring(file_get_contents($handle->file_src_pathname));
     $valid = ($im !== false);
     if ($valid && $handle->uploaded) {
