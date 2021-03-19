@@ -1,0 +1,41 @@
+<project name="Somda" basedir=".">
+    <description>Somda</description>
+
+    <target name="setup">
+        <exec executable="git">
+            <arg value="pull" />
+        </exec>
+        <exec executable="php">
+            <arg value="composer.phar" />
+            <arg value="install" />
+            <arg value="--no-plugins" />
+            <arg value="--no-scripts" />
+        </exec>
+        <exec executable="php">
+            <arg value="composer.phar" />
+            <arg value="dump-autoload" />
+            <arg value="--no-dev" />
+            <arg value="--classmap-authoritative" />
+        </exec>
+        <exec executable="yarn">
+            <arg value="encore" />
+            <arg value="dev" />
+        </exec>
+        <exec executable="php">
+            <arg value="bin/console" />
+            <arg value="cache:clear" />
+        </exec>
+    </target>
+
+    <target name="deploy" depends="setup">
+        <exec executable="chown">
+            <arg value="-R" />
+            <arg value="nginx:nginx" />
+            <arg value="." />
+        </exec>
+        <exec executable="service">
+            <arg value="php-fpm" />
+            <arg value="restart" />
+        </exec>
+    </target>
+</project>

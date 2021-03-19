@@ -1,0 +1,37 @@
+{% extends('base.html.twig') %}
+
+{% block body %}
+    <a href="https://forum.beneluxspoor.net/"><img id="smflogo" src="https://forum.beneluxspoor.net/Themes/beneluxspoor/images/smflogo.png" alt="BeneluxSpoor.net" title="BeneluxSpoor.net"></a>
+
+    <div id="explanation">
+        <h1>Upload van afbeeldingen</h1>
+
+        <p><a href="http://forum.beneluxspoor.net/index.php/topic,52398.0.html" target="_blank">Uitleg over de werking van deze plaatjes upload</a>.</p>
+
+        <p><strong>LET OP:</strong> Alleen uploaden van (model)spoor gerelateerde foto's en plaatjes is toegestaan!</p>
+    </div>
+
+    <br /><br />
+
+    <form action="{{ path('index') }}" class="dropzone" enctype="multipart/form-data" id="upload-zone" method="post" name="form"></form>
+
+    <br /><br />
+
+    <div id="upload_result">Jouw bericht voor in het forum:</div>
+    <br /><button onclick="copyToClipboard('upload_result'); return false;">Kopieer tekst</button>
+{% endblock %}
+
+{% block extra_javascripts %}
+    <script>
+        function copyToClipboard() {
+            let range = document.createRange();
+            range.selectNode(document.getElementById('upload_result'));
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+
+            alert('De tekst is gekopieerd, je kan deze nu in je forumbericht plakken');
+        }
+    </script>
+{% endblock %}

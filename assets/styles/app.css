@@ -1,0 +1,28 @@
+body {
+    background: url('https://forum.beneluxspoor.net/Themes/beneluxspoor/images/bg.gif');
+}
+
+div#explanation {
+    background-color: #FFF;
+    border: 2px solid rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 10px;
+    width: 90%;
+}
+div#explanation h1 {
+    font-size: 15pt;
+}
+
+form.dropzone {
+    background-color: #AFC6DB;
+    width: 90%;
+}
+
+div#upload_result {
+    background-color: white;
+    border: 2px solid rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    min-height: 100px;
+    padding: 10px;
+    width: 90%;
+}
