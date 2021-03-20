@@ -9,3 +9,9 @@ To run this project locally, execute the following steps:
 - Run `yarn encore dev` in the root of this project
 - [Install Symfony](https://symfony.com/download)
 - Run `symfony server:start` in the root of this project
+
+Technical details:
+
+- Allowed filetypes are jpg, png and pdf.
+- Maximum filesize is 5MB.
+- Files are stored as-is, they are not resized. Also, this means exif data is not stripped.
