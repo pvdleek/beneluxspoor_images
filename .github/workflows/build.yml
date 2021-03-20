@@ -1,0 +1,21 @@
+name: build
+
+# Run on pull requests and on the master branch itself.
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - "*"
+  pull_request:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      # Checkout the code.
+      - uses: actions/checkout@v2
+      # Just build everything. That's enough of a test for now.
+      - name: build
+        run: docker-compose build
