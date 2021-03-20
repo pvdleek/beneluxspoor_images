@@ -15,9 +15,16 @@ Dropzone.options.uploadZone = {
 $(function() {
     let uploadZone = new Dropzone('#upload-zone');
     uploadZone.on('success', function(file, response) {
-        let result_element = $('#upload_result')
-        result_element.html(
-            result_element.html() + '<br /><br />[url=https://images.beneluxspoor.net/bnls/' + response + '][img]https://images.beneluxspoor.net/bnls/' + response + '[/img][/url]'
-        );
+        let result_element = $('#upload_result');
+
+        if ('.pdf' === response.substring(response.length - 4, response.length)) {
+            result_element.html(
+                result_element.html() + '<br /><br />[url=https://images.beneluxspoor.net/bnls/' + response + ']https://images.beneluxspoor.net/bnls/' + response + '[/url]'
+            );
+        } else {
+            result_element.html(
+                result_element.html() + '<br /><br />[url=https://images.beneluxspoor.net/bnls/' + response + '][img]https://images.beneluxspoor.net/bnls/' + response + '[/img][/url]'
+            );
+        }
     });
 });
