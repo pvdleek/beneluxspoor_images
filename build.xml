@@ -19,7 +19,7 @@
         </exec>
         <exec executable="yarn">
             <arg value="encore" />
-            <arg value="dev" />
+            <arg value="build" />
         </exec>
         <exec executable="php">
             <arg value="bin/console" />
