@@ -9,6 +9,7 @@ Dropzone.autoDiscover = false;
 Dropzone.options.uploadZone = {
     acceptedFiles: 'image/*,application/pdf',
     dictDefaultMessage: 'Klik hier of drop je bestanden om te uploaden',
+    dictFileTooBig: 'Dit bestand is {{filesize}}MB, dat is groter dan de maximale {{maxFilesize}}MB die wij toestaan',
     maxFilesize: 5,
 }
 

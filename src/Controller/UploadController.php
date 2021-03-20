@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use Imagick;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Twig\Environment;
 
@@ -15,28 +17,51 @@ class UploadController
     private LoggerInterface $logger;
     private SluggerInterface $slugger;
 
+    private string $destination_directory;
+
     public function __construct(Environment $twig, LoggerInterface $logger, SluggerInterface $slugger)
     {
         $this->twig = $twig;
         $this->logger = $logger;
         $this->slugger = $slugger;
+
+        $this->destination_directory = __DIR__ . '/../../bnls';
     }
 
-    public function indexAction(Request $request)
+    public function indexAction(Request $request): Response
     {
         if ($request->isMethod('POST')) {
-            $file = $request->files->all()['file'];
-
-            $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $safeFilename = $this->slugger->slug($originalFilename);
-            $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
-
-            // Move the file to the destination directory
             try {
-                $file->move(__DIR__ . '/../../bnls', $newFilename);
+                $file = $request->files->all()['file'];
+                $mime_type = $file->getMimeType();
+
+                if ('application/pdf' !== $mime_type && 'image/' !== substr($mime_type, 0, 6)) {
+                    throw new AccessDeniedHttpException('Dit mime-type is niet toegestaan');
+                }
+
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $this->slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
+
+                if ('application/pdf'=== $mime_type) {
+                    // Move the file to the destination directory
+                    $file->move($this->destination_directory, $newFilename);
+                    return new Response($newFilename, 200);
+                }
+
+                $image = new Imagick($file->getPathName());
+                $profiles = $image->getImageProfiles('icc', true);
+                $image->stripImage();
+                if(!empty($profiles)) {
+                    $image->profileImage('icc', $profiles['icc']);
+                }
+
+                $image->writeImage($this->destination_directory . '/' . $newFilename);
+                $image->clear();
+                $image->destroy();
             } catch (FileException $exception) {
                 $this->logger->critical($exception->getMessage());
-                return new Response('Het is niet gelukt om de afbeelding te plaatsen, probeer het opnieuw', 400);
+                return new Response('Het is niet gelukt om het bestand te plaatsen, probeer het opnieuw', 400);
             }
 
             return new Response($newFilename, 200);
