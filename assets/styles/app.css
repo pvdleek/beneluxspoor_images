@@ -26,3 +26,16 @@ div#upload_result {
     padding: 10px;
     width: 90%;
 }
+
+button.copy {
+    background-color: #444444;
+    border-left: 1px solid #666666;
+    border-right: 1px solid #333333;
+    color: #CCCCCC;
+    font-size: 13pt;
+    padding: 18px;
+}
+button.copy:hover {
+    background: url('https://forum.beneluxspoor.net/Themes/beneluxspoor/images/arrow2.png') no-repeat bottom center #555555;
+    cursor: pointer;
+}

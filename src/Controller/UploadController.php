@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 class UploadController
@@ -16,14 +17,16 @@ class UploadController
     private Environment $twig;
     private LoggerInterface $logger;
     private SluggerInterface $slugger;
+    private TranslatorInterface $translator;
 
     private string $destination_directory;
 
-    public function __construct(Environment $twig, LoggerInterface $logger, SluggerInterface $slugger)
+    public function __construct(Environment $twig, LoggerInterface $logger, SluggerInterface $slugger, TranslatorInterface $translator)
     {
         $this->twig = $twig;
         $this->logger = $logger;
         $this->slugger = $slugger;
+        $this->translator = $translator;
 
         $this->destination_directory = __DIR__ . '/../../bnls';
     }
@@ -36,7 +39,7 @@ class UploadController
                 $mime_type = $file->getMimeType();
 
                 if ('application/pdf' !== $mime_type && 'image/' !== substr($mime_type, 0, 6)) {
-                    throw new AccessDeniedHttpException('Dit mime-type is niet toegestaan');
+                    throw new AccessDeniedHttpException($this->translator->trans('error.invalidMimeType'));
                 }
 
                 $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
@@ -61,7 +64,10 @@ class UploadController
                 $image->destroy();
             } catch (FileException $exception) {
                 $this->logger->critical($exception->getMessage());
-                return new Response('Het is niet gelukt om het bestand te plaatsen, probeer het opnieuw', 400);
+                return new Response($this->translator->trans('error.generic'), 400);
+            } catch (\Exception $exception) {
+                $this->logger->warning($exception->getMessage());
+                return new Response($this->translator->trans('error.generic'), 400);
             }
 
             return new Response($newFilename, 200);
