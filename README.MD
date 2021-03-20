@@ -32,5 +32,6 @@ if a change works, the docker-compose ought to help you get everything running.
 
 - Allowed filetypes are jpg, png and pdf.
 - Maximum filesize is 5MB.
-- Files are stored as-is, they are not resized. Also, this means exif data is not stripped.
+- Files are stored as-is, they are not resized. One thing that is done is that 
+  the exif data is stripped (with imagemagick).
 
