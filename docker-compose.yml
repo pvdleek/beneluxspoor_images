@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  php:
+    build: .
+    volumes:
+      - ./bnls:/var/www/html/bnls
+    ports:
+      - 9000:8000
