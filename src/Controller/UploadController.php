@@ -54,11 +54,25 @@ class UploadController
 
                 $image = new Imagick($file->getPathName());
                 $profiles = $image->getImageProfiles('icc', true);
+                $orientation = $image->getImageOrientation();
                 $image->stripImage();
                 if(!empty($profiles)) {
                     $image->profileImage('icc', $profiles['icc']);
                 }
-
+                switch($orientation) {
+                    case imagick::ORIENTATION_BOTTOMRIGHT: 
+                        $image->rotateimage("#000", 180); // rotate 180 degrees
+                        break;
+            
+                    case imagick::ORIENTATION_RIGHTTOP:
+                        $image->rotateimage("#000", 90); // rotate 90 degrees CW
+                        break;
+            
+                    case imagick::ORIENTATION_LEFTBOTTOM: 
+                        $image->rotateimage("#000", -90); // rotate 90 degrees CCW
+                        break;
+                }
+            
                 $image->writeImage($this->destination_directory . '/' . $newFilename);
                 $image->clear();
                 $image->destroy();
