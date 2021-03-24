@@ -52,30 +52,7 @@ class UploadController
                     return new Response($newFilename, 200);
                 }
 
-                $image = new Imagick($file->getPathName());
-                $profiles = $image->getImageProfiles('icc', true);
-                $orientation = $image->getImageOrientation();
-                $image->stripImage();
-                if(!empty($profiles)) {
-                    $image->profileImage('icc', $profiles['icc']);
-                }
-                switch($orientation) {
-                    case imagick::ORIENTATION_BOTTOMRIGHT: 
-                        $image->rotateimage("#000", 180); // rotate 180 degrees
-                        break;
-            
-                    case imagick::ORIENTATION_RIGHTTOP:
-                        $image->rotateimage("#000", 90); // rotate 90 degrees CW
-                        break;
-            
-                    case imagick::ORIENTATION_LEFTBOTTOM: 
-                        $image->rotateimage("#000", -90); // rotate 90 degrees CCW
-                        break;
-                }
-            
-                $image->writeImage($this->destination_directory . '/' . $newFilename);
-                $image->clear();
-                $image->destroy();
+                $this->writeImage($file, $newFilename);
             } catch (FileException $exception) {
                 $this->logger->critical($exception->getMessage());
                 return new Response($this->translator->trans('error.generic'), 400);
@@ -88,5 +65,34 @@ class UploadController
         }
 
         return new Response($this->twig->render('upload.html.twig'));
+    }
+
+    private function writeImage($file, string $newFilename): void
+    {
+        $image = new Imagick($file->getPathName());
+        $profiles = $image->getImageProfiles('icc', true);
+        $orientation = $image->getImageOrientation();
+        $image->stripImage();
+        if (!empty($profiles)) {
+            $image->profileImage('icc', $profiles['icc']);
+        }
+        switch($orientation) {
+            case imagick::ORIENTATION_BOTTOMRIGHT:
+                $image->rotateimage('#000', 180); // rotate 180 degrees
+                break;
+
+            case imagick::ORIENTATION_RIGHTTOP:
+                $image->rotateimage('#000', 90); // rotate 90 degrees CW
+                break;
+
+            case imagick::ORIENTATION_LEFTBOTTOM:
+                $image->rotateimage('#000', -90); // rotate 90 degrees CCW
+                break;
+        }
+        $image->scaleImage(min($image->getImageWidth(), 1800), 0);
+
+        $image->writeImage($this->destination_directory . '/' . $newFilename);
+        $image->clear();
+        $image->destroy();
     }
 }
