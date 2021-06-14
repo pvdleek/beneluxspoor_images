@@ -16,6 +16,9 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "jquery": "^3.6.0"
+        "css-what": "^5.0.1",
+        "jquery": "^3.6.0",
+        "postcss": "^8.2.10",
+        "yarn.lock": "^0.0.1-security"
     }
 }
