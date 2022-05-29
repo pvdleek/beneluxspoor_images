@@ -2,9 +2,6 @@
     "enyo/dropzone": {
         "version": "v5.8.1"
     },
-    "php": {
-        "version": "7.4"
-    },
     "psr/cache": {
         "version": "1.0.1"
     },
@@ -182,9 +179,6 @@
             "config/packages/twig.yaml",
             "templates/base.html.twig"
         ]
-    },
-    "symfony/twig-pack": {
-        "version": "v1.0.1"
     },
     "symfony/var-dumper": {
         "version": "v5.2.5"
