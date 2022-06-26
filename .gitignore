@@ -17,5 +17,7 @@ yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 
 /.idea
-/bnls*
-!/bnls*/.gitkeep
+/bnls
+!/bnls/.gitkeep
+/bnls_2022
+!/bnls_2022/.gitkeep
