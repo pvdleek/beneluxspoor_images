@@ -14,17 +14,18 @@ Dropzone.options.uploadZone = {
 }
 
 $(function() {
+    let year = new Date().getFullYear();
     let uploadZone = new Dropzone('#upload-zone');
     uploadZone.on('success', function(file, response) {
         let result_element = $('#upload_result');
 
         if ('.pdf' === response.substring(response.length - 4, response.length)) {
             result_element.html(
-                result_element.html() + '<br /><br />[url=https://images.beneluxspoor.net/bnls/' + response + ']https://images.beneluxspoor.net/bnls/' + response + '[/url]'
+                result_element.html() + '<br /><br />[url=https://images.beneluxspoor.net/bnls_' + year + '/' + response + ']https://images.beneluxspoor.net/bnls_' + year + '/' + response + '[/url]'
             );
         } else {
             result_element.html(
-                result_element.html() + '<br /><br />[url=https://images.beneluxspoor.net/bnls/' + response + '][img]https://images.beneluxspoor.net/bnls/' + response + '[/img][/url]'
+                result_element.html() + '<br /><br />[url=https://images.beneluxspoor.net/bnls_' + year + '/' + response + '][img]https://images.beneluxspoor.net/bnls_' + year + '/' + response + '[/img][/url]'
             );
         }
     });

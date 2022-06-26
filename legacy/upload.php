@@ -9,6 +9,7 @@
     <?php
 
     include('class.upload.php');
+    $year = date('Y');
     $handle = new Verot\Upload\Upload($_FILES['bnls_image']);
     $im = imagecreatefromstring(file_get_contents($handle->file_src_pathname));
     $valid = ($im !== false);
@@ -25,9 +26,9 @@
             echo '<fieldset class="upload">';
             echo '  <legend>Plaatje succesvol geplaatst</legend>';
             echo '  <strong>LET OP: Dit is de link naar je plaatje:</strong>';
-            echo '  <br />Plaatje: <input type="text" size="100" value="https://images.beneluxspoor.net/bnls/' . $handle->file_dst_name . ' "/> ';
-            echo '  <br />Direct met link in het forum plaatsen: <input type="text" size="150" value="[url=https://images.beneluxspoor.net/bnls/' . $handle->file_dst_name . '][img]https://images.beneluxspoor.net/bnls/' . $handle->file_dst_name . '[/img][/url]" />';
-            echo '  <br /><br /><img src="https://images.beneluxspoor.net/bnls/' . $handle->file_dst_name . '" />';
+            echo '  <br />Plaatje: <input type="text" size="100" value="https://images.beneluxspoor.net/bnls_'.$year.'/' . $handle->file_dst_name . ' "/> ';
+            echo '  <br />Direct met link in het forum plaatsen: <input type="text" size="150" value="[url=https://images.beneluxspoor.net/bnls_'.$year.'/' . $handle->file_dst_name . '][img]https://images.beneluxspoor.net/bnls_'.$year.'/' . $handle->file_dst_name . '[/img][/url]" />';
+            echo '  <br /><br /><img src="https://images.beneluxspoor.net/bnls_'.$year.'/' . $handle->file_dst_name . '" />';
 
             $info = getimagesize($handle->file_dst_pathname);
             echo '  <p>' . $info['mime'] . ' &nbsp;-&nbsp; ' . $info[0] . ' x ' . $info[1] . ' &nbsp;-&nbsp; ' . round(filesize($handle->file_dst_pathname) / 256) / 4 . 'KB</p>';

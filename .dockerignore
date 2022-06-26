@@ -1,4 +1,4 @@
-bnls/
+bnls*/
 legacy/
 Dockerfile
 docker-compose.yml

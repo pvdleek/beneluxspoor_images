@@ -28,7 +28,7 @@ class UploadController
         $this->slugger = $slugger;
         $this->translator = $translator;
 
-        $this->destination_directory = __DIR__ . '/../../bnls';
+        $this->destination_directory = __DIR__ . '/../../bnls_'.date('Y');
     }
 
     public function indexAction(Request $request): Response
