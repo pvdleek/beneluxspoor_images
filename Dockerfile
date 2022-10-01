@@ -10,5 +10,5 @@ RUN npm install --global yarn
 RUN yarn install
 RUN yarn encore dev
 RUN wget https://get.symfony.com/cli/installer -O - | bash
-RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
+RUN mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
 CMD [ "symfony", "server:start", "--no-tls" ]
