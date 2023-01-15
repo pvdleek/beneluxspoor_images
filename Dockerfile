@@ -16,7 +16,6 @@ COPY public public/
 COPY src src/
 COPY templates templates/
 COPY translations translations/
-COPY var var/
 COPY .env .
 COPY composer.json .
 COPY composer.lock .
