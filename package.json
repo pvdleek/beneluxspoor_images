@@ -23,7 +23,7 @@
         "css-what": "^5.0.1",
         "jquery": "^3.6.0",
         "postcss": "^8.2.10",
-        "webpack": "^5.75.0",
+        "webpack": "^5.76.0",
         "yarn.lock": "^0.0.1-security"
     }
 }
