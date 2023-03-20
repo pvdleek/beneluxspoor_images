@@ -1,13 +1,9 @@
-version: '3'
+version: "3"
+
 services:
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
+  php:
+    build: .
     volumes:
-      - ./bnls_2022:/var/www/html/public/bnls_2022
-      - ./bnls_2023:/var/www/html/public/bnls_2023
-    environment:
-      SYMFONY_ENV: prod
+      - ./bnls:/var/www/html/bnls
+    ports:
+      - 9000:8000
