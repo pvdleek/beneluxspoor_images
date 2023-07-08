@@ -32,11 +32,11 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "./conf.d/timezone.ini:/usr/local/etc/php/conf.d/timezone.ini"
       - static_content:/var/www/html/
-      - "./bnls:/var/www/html/bnls"
-      - "./bnls_2022:/var/www/html/bnls_2022"
-      - "./bnls_2023:/var/www/html/bnls_2023"
-      - "./bnls_2024:/var/www/html/bnls_2024"
-      - "./bnls_2025:/var/www/html/bnls_2025"
+      - "./bnls:/var/www/bnls"
+      - "./bnls_2022:/var/www/bnls_2022"
+      - "./bnls_2023:/var/www/bnls_2023"
+      - "./bnls_2024:/var/www/bnls_2024"
+      - "./bnls_2025:/var/www/bnls_2025"
     restart: always
 
 volumes:
