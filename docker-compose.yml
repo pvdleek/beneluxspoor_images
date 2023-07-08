@@ -3,7 +3,7 @@ version: '3.4'
 x-static-content-volume:
   &static-content-volume
   type: bind
-  source: ./html
+  source: ./public
   target: /var/www/html
 x-images-volume:
   &images-volume
