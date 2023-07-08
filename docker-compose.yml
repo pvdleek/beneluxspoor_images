@@ -11,11 +11,11 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./conf.d/:/etc/nginx/conf.d/
       - static_content:/var/www/html/
-      - images_bnls:/var/www/bnls/
-      - images_bnls_2022:/var/www/bnls_2022/
-      - images_bnls_2023:/var/www/bnls_2023/
-      - images_bnls_2024:/var/www/bnls_2024/
-      - images_bnls_2025:/var/www/bnls_2025/
+      - images_bnls:/var/www/html/bnls/
+      - images_bnls_2022:/var/www/html/bnls_2022/
+      - images_bnls_2023:/var/www/html/bnls_2023/
+      - images_bnls_2024:/var/www/html/bnls_2024/
+      - images_bnls_2025:/var/www/html/bnls_2025/
     depends_on:
       - php-fpm
     links:
