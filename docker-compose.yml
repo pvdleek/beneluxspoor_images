@@ -37,16 +37,11 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./conf.d/:/etc/nginx/conf.d/
       - static_content:/var/www/html/
-      - <<: *images-volume
-        target: /var/www/html/bnls
-      - <<: *images-2022-volume
-        target: /var/www/html/bnls_2022
-      - <<: *images-2023-volume
-        target: /var/www/html/bnls_2023
-      - <<: *images-2024-volume
-        target: /var/www/html/bnls_2024
-      - <<: *images-2025-volume
-        target: /var/www/html/bnls_2025
+      - *images-volume
+      - *images-2022-volume
+      - *images-2023-volume
+      - *images-2024-volume
+      - *images-2025-volume
     depends_on:
       - php-fpm
     links:
