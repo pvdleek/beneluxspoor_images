@@ -1,5 +1,10 @@
 version: '3.4'
 
+x-static-content-volume:
+  &static-content-volume
+  type: bind
+  source: ./html
+  target: /var/www/html
 x-images-volume:
   &images-volume
   type: bind
@@ -36,7 +41,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./conf.d/:/etc/nginx/conf.d/
-      - static_content:/var/www/html/
+      - *static-content-volume
       - *images-volume
       - *images-2022-volume
       - *images-2023-volume
@@ -62,7 +67,7 @@ services:
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
       - "./conf.d/timezone.ini:/usr/local/etc/php/conf.d/timezone.ini"
-      - static_content:/var/www/html/
+      - *static-content-volume
       - *images-volume
       - *images-2022-volume
       - *images-2023-volume
