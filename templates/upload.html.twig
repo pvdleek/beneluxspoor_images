@@ -1,0 +1,41 @@
+{% extends('base.html.twig') %}
+
+{% block body %}
+    <a href="https://forum.beneluxspoor.net/"><img id="smflogo" src="https://forum.beneluxspoor.net/Themes/beneluxspoor/images/smflogo.png" alt="BeneluxSpoor.net" title="BeneluxSpoor.net"></a>
+
+    <div id="explanation">
+        <h1>{{ 'explanation.title' | trans }}</h1>
+
+        <p><a href="http://forum.beneluxspoor.net/index.php/topic,52398.0.html" target="_blank">{{ 'explanation.linkTitle' | trans }}</a>.</p>
+
+        <p>{{ 'explanation.onlyRailRelated' | trans }}</p>
+
+        <p><strong>{{ 'explanation.payAttention' | trans }}</strong> {{ 'explanation.copyrightNotice' | trans | format('<a href="https://forum.beneluxspoor.net/index.php?topic=97029.0" target="_blank">' ~ ('explanation.copyrightLinkText' | trans) ~ '</a>') | raw }}</p>
+    </div>
+
+    <br /><br />
+
+    <form action="{{ path('index') }}" class="dropzone" enctype="multipart/form-data" id="upload-zone" method="post" name="form"></form>
+
+    <br /><br />
+
+    <div id="explanation">{{ 'resultTitle' | trans }}</div>
+
+    <div id="upload_result"></div>
+    <br /><button class="copy" onclick="copyToClipboard('upload_result'); return false;">{{ 'button.copy' | trans }}</button>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        function copyToClipboard() {
+            let range = document.createRange();
+            range.selectNode(document.getElementById('upload_result'));
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+
+            alert('{{ 'alert.copied' | trans }}');
+        }
+    </script>
+{% endblock %}

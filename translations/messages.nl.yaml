@@ -1,0 +1,16 @@
+title: 'BNLS plaatjes upload'
+explanation:
+  title: 'Upload van afbeeldingen'
+  linkTitle: 'Uitleg over de werking van deze upload'
+  onlyRailRelated: 'Alleen uploaden van (model)spoor gerelateerde foto''s, plaatjes en documenten is toegestaan!'
+  payAttention: 'LET OP:'
+  copyrightNotice: 'Bekijk voordat je iets upload onze %s'
+  copyrightLinkText: 'uitleg over auteursrechten'
+resultTitle: 'Als je 1 of meer afbeeldingen uploadt komt hieronder automatisch tekst te staan die je in het BeneluxSpoor forum kunt gebruiken:'
+button:
+  copy: 'Kopieer tekst'
+alert:
+  copied: 'De tekst is gekopieerd, je kan deze nu in je forumbericht plakken'
+error:
+  generic: 'Het is niet gelukt om het bestand te plaatsen, probeer het opnieuw'
+  invalidMimeType: 'Dit mime-type is niet toegestaan'

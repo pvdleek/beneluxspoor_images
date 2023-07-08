@@ -1,0 +1,41 @@
+body {
+    background: url('https://forum.beneluxspoor.net/Themes/beneluxspoor/images/bg.gif');
+}
+
+div#explanation {
+    background-color: #FFF;
+    border: 2px solid rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 10px;
+    width: auto;
+}
+div#explanation h1 {
+    font-size: 15pt;
+}
+
+form.dropzone {
+    background-color: #AFC6DB;
+    width: auto;
+}
+
+div#upload_result {
+    background-color: white;
+    border: 2px solid rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    min-height: 100px;
+    padding: 10px;
+    width: auto;
+}
+
+button.copy {
+    background-color: #444444;
+    border-left: 1px solid #666666;
+    border-right: 1px solid #333333;
+    color: #CCCCCC;
+    font-size: 13pt;
+    padding: 18px;
+}
+button.copy:hover {
+    background: url('https://forum.beneluxspoor.net/Themes/beneluxspoor/images/arrow2.png') no-repeat bottom center #555555;
+    cursor: pointer;
+}

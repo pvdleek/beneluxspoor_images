@@ -1,0 +1,43 @@
+version: '3.3'
+
+services:
+  server:
+    image: nginx:1.17-alpine
+    ports:
+      - ${PORT}:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./conf.d/:/etc/nginx/conf.d/
+      - static_content:/var/www/html/
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    depends_on:
+      - php-fpm
+    links:
+      - php-fpm
+    restart: always
+
+  php-fpm:
+    image: 10.62.181.2:5000/bnls_images
+    environment:
+      APP_ENV: "prod"
+      ENV_SUBSTITUTION_ENABLE: "true"
+      PHP_MEMORY_LIMIT: "512M"
+      PHP_FPM_LISTEN: 9090
+      PHP_SESSION_GC_MAXLIFETIME: 7200
+    expose:
+      - 9090
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "./conf.d/timezone.ini:/usr/local/etc/php/conf.d/timezone.ini"
+      - static_content:/var/www/html/
+      - "./bnls:/var/www/bnls"
+      - "./bnls_2022:/var/www/bnls_2022"
+      - "./bnls_2023:/var/www/bnls_2023"
+      - "./bnls_2024:/var/www/bnls_2024"
+      - "./bnls_2025:/var/www/bnls_2025"
+    restart: always
+
+volumes:
+  static_content:
