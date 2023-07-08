@@ -6,11 +6,16 @@ services:
     ports:
       - ${PORT}:80
     volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./conf.d/:/etc/nginx/conf.d/
       - static_content:/var/www/html/
-      - "/etc/timezone:/etc/timezone:ro"
-      - "/etc/localtime:/etc/localtime:ro"
+      - images_bnls:/var/www/bnls/
+      - images_bnls_2022:/var/www/bnls_2022/
+      - images_bnls_2023:/var/www/bnls_2023/
+      - images_bnls_2024:/var/www/bnls_2024/
+      - images_bnls_2025:/var/www/bnls_2025/
     depends_on:
       - php-fpm
     links:
@@ -32,6 +37,11 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "./conf.d/timezone.ini:/usr/local/etc/php/conf.d/timezone.ini"
       - static_content:/var/www/html/
+      - images_bnls:/var/www/bnls/
+      - images_bnls_2022:/var/www/bnls_2022/
+      - images_bnls_2023:/var/www/bnls_2023/
+      - images_bnls_2024:/var/www/bnls_2024/
+      - images_bnls_2025:/var/www/bnls_2025/
       - "./bnls:/var/www/bnls"
       - "./bnls_2022:/var/www/bnls_2022"
       - "./bnls_2023:/var/www/bnls_2023"
@@ -41,3 +51,8 @@ services:
 
 volumes:
   static_content:
+  images_bnls:
+  images_bnls_2022:
+  images_bnls_2023:
+  images_bnls_2024:
+  images_bnls_2025:
