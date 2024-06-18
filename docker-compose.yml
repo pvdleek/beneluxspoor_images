@@ -10,6 +10,11 @@ x-images-volume:
   type: bind
   source: ./bnls
   target: /var/www/bnls
+x-images-abload-volume:
+  &images-abload-volume
+  type: bind
+  source: ./abload
+  target: /var/www/abload
 x-images-2022-volume:
   &images-2022-volume
   type: bind
@@ -43,6 +48,7 @@ services:
       - ./conf.d/:/etc/nginx/conf.d/
       - *static-content-volume
       - *images-volume
+      - *images-abload-volume
       - *images-2022-volume
       - *images-2023-volume
       - *images-2024-volume
@@ -69,6 +75,7 @@ services:
       - "./conf.d/timezone.ini:/usr/local/etc/php/conf.d/timezone.ini"
       - *static-content-volume
       - *images-volume
+      - *images-abload-volume
       - *images-2022-volume
       - *images-2023-volume
       - *images-2024-volume
