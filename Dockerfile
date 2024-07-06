@@ -1,6 +1,4 @@
-FROM joseluisq/php-fpm:8.3
-
-RUN pecl uninstall psr
+FROM 10.62.181.2:5000/base_image
 
 RUN apk add --no-cache $PHPIZE_DEPS imagemagick-dev
 RUN pecl install imagick
