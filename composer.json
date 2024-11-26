@@ -10,16 +10,16 @@
         "ext-iconv": "*",
         "ext-imagick": "*",
         "enyo/dropzone": "*",
-        "symfony/asset": "6.3.*",
-        "symfony/console": "6.3.*",
-        "symfony/dotenv": "6.3.*",
+        "symfony/asset": "6.4.*",
+        "symfony/console": "6.4.*",
+        "symfony/dotenv": "6.4.*",
         "symfony/flex": "^2",
-        "symfony/framework-bundle": "6.3.*",
-        "symfony/mime": "6.3.*",
+        "symfony/framework-bundle": "6.4.*",
+        "symfony/mime": "6.4.*",
         "symfony/runtime": "6.4.*",
-        "symfony/translation": "6.3.*",
-        "symfony/twig-bundle": "6.3.*",
-        "symfony/yaml": "6.3.*",
+        "symfony/translation": "6.4.*",
+        "symfony/twig-bundle": "6.4.*",
+        "symfony/yaml": "6.4.*",
         "twig/extra-bundle": "*"
     },
     "config": {
@@ -67,7 +67,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "6.3.*"
+            "require": "6.4.*"
         }
     }
 }
