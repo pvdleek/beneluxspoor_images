@@ -1,0 +1,33 @@
+services:
+  server:
+    image: nginx:1.17-alpine
+    depends_on:
+      - php-fpm
+    ports:
+      - ${PORT}:80
+    volumes:
+      - /home/peter/git/server-configuration/beneluxspoor_images/conf.d/:/etc/nginx/conf.d/
+      - /home/peter/git/server-configuration/_configuration/nginx.conf:/etc/nginx/nginx.conf
+      - /home/peter/git/server-configuration/_configuration/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - bnls_images_2024:/var/www/bnls_2024
+      - static_content:/var/www/html/
+
+  php-fpm:
+    build: .
+    environment:
+      APP_ENV: "prod"
+      ENV_SUBSTITUTION_ENABLE: "true"
+      PHP_MEMORY_LIMIT: "512M"
+      PHP_FPM_LISTEN: 9090
+      PHP_SESSION_GC_MAXLIFETIME: 7200
+    volumes:
+      - /home/peter/git/server-configuration/_configuration/timezone.ini:/usr/local/etc/php/conf.d/timezone.ini
+      - /home/peter/git/server-configuration/_configuration/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - bnls_images_2024:/var/www/bnls_2024
+      - static_content:/var/www/html/
+
+volumes:
+  static_content: ~
+  bnls_images_2024: ~

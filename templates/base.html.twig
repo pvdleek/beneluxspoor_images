@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}{{ 'title' | trans }}{% endblock %}</title>
-        <link rel="stylesheet" href="{{ asset('app.css') }}" type="text/css" />
+        <link rel="stylesheet" href="{{ asset('app.css') }}?version={{ 'app.css'|fileTimestamp }}" type="text/css" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
@@ -11,7 +11,7 @@
         {% block body %}{% endblock %}
     </body>
     <script src="https://cdn.jsdelivr.net/npm/dropzone@5/dist/min/dropzone.min.js"></script>
-    <script src="{{ asset('jquery.min.js') }}"></script>
-    <script src="{{ asset('app.js') }}"></script>
+    <script src="{{ asset('jquery.min.js') }}?version={{ 'jquery.min.js'|fileTimestamp }}"></script>
+    <script src="{{ asset('app.js') }}?version={{ 'app.js'|fileTimestamp }}"></script>
     {% block javascript %}{% endblock %}
 </html>

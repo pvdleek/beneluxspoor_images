@@ -22,4 +22,13 @@ $(function() {
             );
         }
     });
+
+    document.onpaste = function(event) {
+        const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+        items.forEach((item) => {
+            if (item.kind === 'file') {
+                uploadZone.addFile(item.getAsFile());
+            }
+        });
+    }
 });

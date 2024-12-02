@@ -2,6 +2,7 @@
 /.env.local
 /.env.local.php
 /.env.*.local
+/bnls_2024/
 /config/secrets/prod/prod.decrypt.private.php
 /html/bundles/
 /var/
