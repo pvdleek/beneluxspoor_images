@@ -12,7 +12,7 @@ RUN docker-php-ext-enable imagick
 WORKDIR /var/www
 
 RUN apk add --no-cache tzdata
-ENV TZ Europe/Amsterdam
+ENV TZ=Europe/Amsterdam
 
 COPY .env.local ./.env
 COPY composer.json ./
