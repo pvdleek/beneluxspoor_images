@@ -13,6 +13,7 @@ WORKDIR /var/www
 
 RUN apk add --no-cache tzdata
 ENV TZ=Europe/Amsterdam
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
 COPY .env.local ./.env
 COPY composer.json ./
