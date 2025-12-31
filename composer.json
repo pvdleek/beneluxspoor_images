@@ -68,6 +68,10 @@
         "symfony": {
             "allow-contrib": false,
             "require": "6.4.*"
-        }
+        },
+        "public-dir": "./html"
+    },
+    "require-dev": {
+        "symfony/web-profiler-bundle": "6.4.*"
     }
 }
