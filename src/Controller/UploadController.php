@@ -71,16 +71,16 @@ class UploadController
             $image->profileImage('icc', $profiles['icc']);
         }
         switch($orientation) {
-            case imagick::ORIENTATION_BOTTOMRIGHT:
-                $image->rotateimage('#000', 180); // rotate 180 degrees
+            case Imagick::ORIENTATION_BOTTOMRIGHT:
+                $image->rotateImage('#000', 180); // rotate 180 degrees
                 break;
 
-            case imagick::ORIENTATION_RIGHTTOP:
-                $image->rotateimage('#000', 90); // rotate 90 degrees CW
+            case Imagick::ORIENTATION_RIGHTTOP:
+                $image->rotateImage('#000', 90); // rotate 90 degrees CW
                 break;
 
-            case imagick::ORIENTATION_LEFTBOTTOM:
-                $image->rotateimage('#000', -90); // rotate 90 degrees CCW
+            case Imagick::ORIENTATION_LEFTBOTTOM:
+                $image->rotateImage('#000', -90); // rotate 90 degrees CCW
                 break;
         }
         $image->scaleImage(min($image->getImageWidth(), 1800), 0);
