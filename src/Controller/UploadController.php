@@ -5,6 +5,7 @@ namespace App\Controller;
 use Imagick;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -36,32 +37,35 @@ class UploadController
                     throw new AccessDeniedHttpException($this->translator->trans('error.invalidMimeType'));
                 }
 
-                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $this->slugger->slug($originalFilename);
-                $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
+                $original_filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $safe_filename = $this->slugger->slug($original_filename);
+                $new_filename = $safe_filename . '-' . uniqid() . '.' . $file->guessExtension();
 
-                if ('application/pdf'=== $mime_type) {
+                if ('application/pdf' === $mime_type) {
                     // Move the file to the destination directory
-                    $file->move($this->destination_directory, $newFilename);
-                    return new Response($newFilename, 200);
+                    $file->move($this->destination_directory, $new_filename);
+
+                    return new Response($new_filename, 200);
                 }
 
-                $this->writeImage($file, $newFilename);
+                $this->writeImage($file, $new_filename);
             } catch (FileException $exception) {
                 $this->logger->critical($exception->getMessage());
+
                 return new Response($this->translator->trans('error.generic'), 400);
             } catch (\Exception $exception) {
                 $this->logger->warning($exception->getMessage());
+                
                 return new Response($this->translator->trans('error.generic'), 400);
             }
 
-            return new Response($newFilename, 200);
+            return new Response($new_filename, 200);
         }
 
         return new Response($this->twig->render('upload.html.twig'));
     }
 
-    private function writeImage($file, string $newFilename): void
+    private function writeImage(UploadedFile $file, string $new_filename): void
     {
         $image = new Imagick($file->getPathName());
         $profiles = $image->getImageProfiles('icc', true);
@@ -85,7 +89,7 @@ class UploadController
         }
         $image->scaleImage(min($image->getImageWidth(), 1800), 0);
 
-        $image->writeImage($this->destination_directory . '/' . $newFilename);
+        $image->writeImage($this->destination_directory.'/'.$new_filename);
         $image->clear();
         $image->destroy();
     }

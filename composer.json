@@ -66,12 +66,13 @@
     },
     "extra": {
         "symfony": {
-            "allow-contrib": false,
+            "allow-contrib": true,
             "require": "7.4.*"
         },
         "public-dir": "./html"
     },
     "require-dev": {
+        "phpstan/phpstan": "^2.1",
         "symfony/web-profiler-bundle": "7.4.*"
     }
 }
