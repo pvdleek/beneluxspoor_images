@@ -1,13 +1,6 @@
 FROM pvdleek/server-configuration:base_image
 
-ARG IMAGICK_PHP83_FIX_COMMIT=9df92616f577e38625b96b7b903582a46c064739
-
 RUN apk add gcc make autoconf libc-dev pkgconfig imagemagick-dev imagemagick
-
-RUN curl -L https://github.com/remicollet/imagick/archive/${IMAGICK_PHP83_FIX_COMMIT}.zip -o /tmp/imagick-issue-php83.zip  \
-    && unzip /tmp/imagick-issue-php83.zip -d /tmp \
-    && pecl install /tmp/imagick-${IMAGICK_PHP83_FIX_COMMIT}/package.xml
-RUN docker-php-ext-enable imagick
 
 WORKDIR /var/www
 
