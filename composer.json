@@ -4,22 +4,22 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.3",
         "ext-ctype": "*",
         "ext-fileinfo": "*",
         "ext-iconv": "*",
         "ext-imagick": "*",
         "enyo/dropzone": "*",
-        "symfony/asset": "7.4.*",
-        "symfony/console": "7.4.*",
-        "symfony/dotenv": "7.4.*",
+        "symfony/asset": "8.0.*",
+        "symfony/console": "8.0.*",
+        "symfony/dotenv": "8.0.*",
         "symfony/flex": "^2",
-        "symfony/framework-bundle": "7.4.*",
-        "symfony/mime": "7.4.*",
-        "symfony/runtime": "7.4.*",
-        "symfony/translation": "7.4.*",
-        "symfony/twig-bundle": "7.4.*",
-        "symfony/yaml": "7.4.*",
+        "symfony/framework-bundle": "8.0.*",
+        "symfony/mime": "8.0.*",
+        "symfony/runtime": "8.0.*",
+        "symfony/translation": "8.0.*",
+        "symfony/twig-bundle": "8.0.*",
+        "symfony/yaml": "8.0.*",
         "twig/extra-bundle": "*"
     },
     "config": {
@@ -67,12 +67,12 @@
     "extra": {
         "symfony": {
             "allow-contrib": true,
-            "require": "7.4.*"
+            "require": "8.0.*"
         },
         "public-dir": "./html"
     },
     "require-dev": {
         "phpstan/phpstan": "^2.1",
-        "symfony/web-profiler-bundle": "7.4.*"
+        "symfony/web-profiler-bundle": "8.0.*"
     }
 }
