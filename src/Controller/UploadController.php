@@ -23,7 +23,7 @@ class UploadController
         private readonly SluggerInterface $slugger,
         private readonly TranslatorInterface $translator,
     ) {
-        $this->destination_directory = __DIR__ . '/../../bnls_'.date('Y');
+        $this->destination_directory = __DIR__.'/../../bnls_'.\date('Y');
     }
 
     public function indexAction(Request $request): Response
@@ -39,10 +39,9 @@ class UploadController
 
                 $original_filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                 $safe_filename = $this->slugger->slug($original_filename);
-                $new_filename = $safe_filename . '-' . uniqid() . '.' . $file->guessExtension();
+                $new_filename = $safe_filename.'-'.\uniqid().'.'.$file->guessExtension();
 
                 if ('application/pdf' === $mime_type) {
-                    // Move the file to the destination directory
                     $file->move($this->destination_directory, $new_filename);
 
                     return new Response($new_filename, 200);
@@ -67,7 +66,7 @@ class UploadController
 
     private function writeImage(UploadedFile $file, string $new_filename): void
     {
-        $image = new Imagick($file->getPathName());
+        $image = new Imagick($file->getPathname());
         $profiles = $image->getImageProfiles('icc', true);
         $orientation = $image->getImageOrientation();
         $image->stripImage();
