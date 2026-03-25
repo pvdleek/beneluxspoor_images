@@ -1,4 +1,4 @@
-FROM pvdleek/server-configuration:base_image
+FROM joseluisq/php-fpm:8.5
 
 RUN apk add gcc make autoconf libc-dev pkgconfig imagemagick-dev imagemagick
 
@@ -8,7 +8,7 @@ RUN apk add --no-cache tzdata
 ENV TZ=Europe/Amsterdam
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-COPY .env.prod ./.env
+COPY .env ./
 COPY composer.json ./
 COPY composer.lock ./
 COPY composer.phar ./
