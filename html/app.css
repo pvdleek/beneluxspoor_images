@@ -1,95 +1,100 @@
 /* Basis reset */
 body {
-    margin: 0;
-    background: #f4f6f8;
-    font-family: "Open Sans", sans-serif;
-    font-size: 15px;
-    color: #4c4c4c;
-    line-height: 21px;
+	margin: 0;
+	background: #f4f6f8;
+	font-family: "Open Sans", sans-serif;
+	font-size: 15px;
+	color: #4c4c4c;
+	line-height: 21px;
 }
 
 body>br {
-    display: none;
+	display: none;
 }
 
 /* Blauwe header (logo-balk) */
 #header {
-    background-image: linear-gradient(96.5deg, rgb(39, 103, 187) 10.4%, rgb(16, 72, 144) 87.7%);
-    padding: 5px 30px 0 30px;
-    border-bottom: 10px solid rgb(16, 72, 144);
+	background-image: linear-gradient(96.5deg, rgb(39, 103, 187) 10.4%, rgb(16, 72, 144) 87.7%);
+	border-bottom: 10px solid rgb(16, 72, 144);
+}
+
+#header a {
+	display: block;
+	max-width: 940px;
+	margin: 0 auto;
 }
 
 /* Content blok */
 #explanation {
-    width: 90%;
-    max-width: 900px;
-    margin: 20px auto;
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+	width: 90%;
+	max-width: 900px;
+	margin: 20px auto;
+	background: #ffffff;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
 /* Titel */
 h1 {
-    margin-top: 0;
-    font-family: "Open Sans", sans-serif;
-    font-size: 1.2em;
-    color: #4c4c4c;
+	margin-top: 0;
+	font-family: "Open Sans", sans-serif;
+	font-size: 1.3em;
+	color: #4c4c4c;
 }
 
 /* Links */
 a {
-    color: rgba(39,103,187,1);
-    text-decoration: none;
+	color: rgba(39,103,187,1);
+	text-decoration: none;
 }
 a:hover {
-    color: #4c4c4c;
-    text-decoration: underline;
-    cursor: pointer;
+	color: #4c4c4c;
+	text-decoration: underline;
+	cursor: pointer;
 }
 
 /* Dropzone upload */
 .dropzone {
-    width: 80%;
-    max-width: 900px;
-    margin: 0 auto;
-    border: 2px dashed #2c6fb7;
-    border-radius: 6px;
-    background: #ddd !important;
+	width: 80%;
+	max-width: 900px;
+	margin: 0 auto;
+	border: 2px dashed #2c6fb7;
+	border-radius: 6px;
+	background: #ddd !important;
 }
 .dropzone:hover {
-    background: #eee !important;
+	background: #eee !important;
 }
 
 /* Resultaatblok */
 #upload_result {
-    width: 90%;
-    max-width: 900px;
-    min-height: 100px;
-    margin: 10px auto;
-    background: #eee;
-    padding: 20px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    font-family: monospace;
+	width: 90%;
+	max-width: 900px;
+	min-height: 100px;
+	margin: 10px auto;
+	background: #eee;
+	padding: 0 20px 20px 20px;
+	border-radius: 10px;
+	border: 1px solid #ddd;
+	font-family: monospace;
+	font-size: 14px;
 }
 
 /* Knop */
 button.copy {
-    display: block;
-    margin: 10px auto 40px auto;
-    padding: 10px 16px;
-    /*background: #2c6fb7;*/
-    background:rgba(39,103,187,1);
-    color: #fff;
-    font-weight: bold;
-    border: none;
-    border-radius: 4px;
-    box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
-    cursor: pointer;
+	display: block;
+	margin: 10px auto 40px auto;
+	padding: 10px 16px;
+	background: rgba(39,103,187,1);
+	color: #fff;
+	font-weight: bold;
+	border: none;
+	border-radius: 4px;
+	box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
+	cursor: pointer;
 }
 button.copy:hover {
-    background-color: #636363;
-    box-shadow: none;
+	background-color: #636363;
+	box-shadow: none;
 }
