@@ -8,6 +8,7 @@ RUN apk add --no-cache tzdata
 ENV TZ=Europe/Amsterdam
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV PHP_DISABLE_EXTENSIONS=psr
+ENV BNLS_IMAGE_UPLOAD_SECRET=from-compose
 
 COPY .env ./
 COPY composer.json ./
