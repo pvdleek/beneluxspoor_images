@@ -24,6 +24,7 @@
 //!\ Root url where uploaded files are hosted
 $ImageUpload_config['root_url'] = 'https://images.beneluxspoor.net';
 $ImageUpload_config['root_url'] = 'http://localhost:9000';
+/* ^^^ TEMP REINOUT URL, TODO */
 
 // Root path where uploaded files are hosted. No change needed if this script itself is in subdirectory: Sources/
 $ImageUpload_config['root_path'] = '/var/www';
