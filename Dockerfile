@@ -10,6 +10,8 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV PHP_DISABLE_EXTENSIONS=psr
 # The secret below is also used by the forum (they should be in sync)
 ENV BNLS_IMAGE_UPLOAD_SECRET="from-compose"
+# The board url is only used for building the absolute url to an uploaded image.
+ENV BNLS_IMAGE_BOARD_URL="from-compose"
 
 COPY .env ./
 COPY composer.json ./
