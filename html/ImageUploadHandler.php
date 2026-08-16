@@ -113,12 +113,6 @@ $topicId = (int) ($settings['topicid'] ?? 0);
  * --------------------------------------------------------------------------
  */
 
-$tmpDir   = trim($ImageUpload_config['tmp_dir'], '/');
-
-if (!preg_match('~^[a-zA-Z0-9/_-]+$~', $tmpDir)) {
-    die('{"jsonrpc":"2.0","error":{"code":102,"message":"Invalid tmp dir"},"id":"id"}');
-}
-
 $uploadDir = 'bnls_' . date('Y');
 
 
@@ -434,13 +428,7 @@ if (!is_dir($uploadPath)) {
     mkdir($uploadPath, 0755, true);
 }
 
-$tmpPath = $ImageUpload_config['root_path'] . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $tmpDir);
-$tmpPath = '/tmp';
-
-// Create temp directory if it does not exist
-if (!is_dir($tmpPath)) {
-    mkdir($tmpPath, 0755, true);
-}
+$tmpPath = sys_get_temp_dir();
 
 $tmpFilePath = $tmpPath . DIRECTORY_SEPARATOR . $fileName['name'] . '.' . $fileName['extension'];
 
