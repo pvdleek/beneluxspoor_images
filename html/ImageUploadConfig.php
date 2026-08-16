@@ -87,23 +87,6 @@ $ImageUpload_config['filename_suffix_unique'] = false;
 
 /**
  * --------------------------------------------------------------------------
- * Thumbnails
- * --------------------------------------------------------------------------
- * maximum dimensions are set in Attachment Settings -> Thumbnail Settings -> thumbnails
- */
-
-// Create thumbnail image
-$ImageUpload_config['create_thumb'] = false;
-
-// Add a suffix to the thumbnail filename
-$ImageUpload_config['thumb_suffix'] = 't';
-
-// Save thumbnails in this subdirectory
-$ImageUpload_config['thumb_subdir'] = '';
-
-
-/**
- * --------------------------------------------------------------------------
  * Preview images
  * --------------------------------------------------------------------------
  * maximum dimensions are set in Attachment Settings -> Thumbnail Settings -> posted or attached images
