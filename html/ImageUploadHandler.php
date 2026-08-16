@@ -128,13 +128,8 @@ else {
     $uploadDir = ltrim($ImageUpload_config['upload_dir'], '/');
 
     // Append current year to upload directory
-    if ($ImageUpload_config['upload_dir_suffix_year'] || $ImageUpload_config['upload_dir_suffix_month']) {
+    if ($ImageUpload_config['upload_dir_suffix_year']) {
         $uploadDir .= date('Y');
-    }
-
-    // Append current month to upload directory
-    if ($ImageUpload_config['upload_dir_suffix_month']) {
-        $uploadDir .= date('m');
     }
 
     $uploadDir = trim($uploadDir, '/');

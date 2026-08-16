@@ -35,9 +35,6 @@ $ImageUpload_config['upload_dir'] = 'bnls_';
 // Add the current year as suffix to the Upload directory
 $ImageUpload_config['upload_dir_suffix_year'] = true;
 
-// Add the current month as suffix to the Upload directory
-$ImageUpload_config['upload_dir_suffix_month'] = false;
-
 // Subdirectory for uploaded temporary chunk files
 $ImageUpload_config['tmp_dir'] = 'tmp';
 
