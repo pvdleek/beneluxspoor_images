@@ -43,7 +43,7 @@ $ImageUpload_config['allow-origin'] = array(
     'https://test.beneluxspoor.net'
 );
 
-//!\ Prevent manipulation of settings. Change this to something unique
+//!\ Prevent manipulation of settings. Env var should have the same value for both the forum and image site.
 $ImageUpload_config['secret_key'] = getenv("BNLS_IMAGE_UPLOAD_SECRET");
 
 
