@@ -9,10 +9,7 @@
  * @license AGPLv3 https://www.gnu.org/licenses/agpl-3.0.en.html
  */
 
-
-
-//!\ Settings with this marking are used in both ImageUpload.php and ImageUploadHandler.php
-
+/* Note: these settings are just the ones needed on the images server */
 
 
 /**
