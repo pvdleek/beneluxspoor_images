@@ -36,9 +36,6 @@ $ImageUpload_config['root_path'] = '/var/www';
  * --------------------------------------------------------------------------
  */
 
-//!\ Url that points to the Upload Handler
-$ImageUpload_config['upload_handler_url'] = '/Sources/ImageUploadHandler.php';
-
 // CORS: whitelist all (sub)domains that are allowed to send files to the Upload Handler. Use '*' to allow all origins
 $ImageUpload_config['allow-origin'] = array(
     'http://localhost:8000',
