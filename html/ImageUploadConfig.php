@@ -11,6 +11,7 @@
 
 /* Note: these settings are just the ones needed on the images server */
 
+$ImageUpload_config = array();
 
 /**
  * --------------------------------------------------------------------------
