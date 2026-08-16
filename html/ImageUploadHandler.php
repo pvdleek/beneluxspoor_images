@@ -128,9 +128,7 @@ else {
     $uploadDir = ltrim($ImageUpload_config['upload_dir'], '/');
 
     // Append current year to upload directory
-    if ($ImageUpload_config['upload_dir_suffix_year']) {
-        $uploadDir .= date('Y');
-    }
+    $uploadDir .= date('Y');
 
     $uploadDir = trim($uploadDir, '/');
 }

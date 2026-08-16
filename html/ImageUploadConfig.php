@@ -32,9 +32,6 @@ $ImageUpload_config['root_path'] = '/var/www';
 // Subdirectory for uploaded files
 $ImageUpload_config['upload_dir'] = 'bnls_';
 
-// Add the current year as suffix to the Upload directory
-$ImageUpload_config['upload_dir_suffix_year'] = true;
-
 // Subdirectory for uploaded temporary chunk files
 $ImageUpload_config['tmp_dir'] = 'tmp';
 
