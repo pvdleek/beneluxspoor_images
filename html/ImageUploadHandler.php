@@ -113,36 +113,7 @@ $topicId = (int) ($settings['topicid'] ?? 0);
  * --------------------------------------------------------------------------
  */
 
-$tmpDir   = trim($ImageUpload_config['tmp_dir'], '/');
-
-if (!preg_match('~^[a-zA-Z0-9/_-]+$~', $tmpDir)) {
-    die('{"jsonrpc":"2.0","error":{"code":102,"message":"Invalid tmp dir"},"id":"id"}');
-}
-
-if ($action == 'pm' && !empty($ImageUpload_config['pm_upload_dir'])) {
-
-    $uploadDir = trim($ImageUpload_config['pm_upload_dir'], '/');
-}
-else {
-
-    $uploadDir = ltrim($ImageUpload_config['upload_dir'], '/');
-
-    // Append current year to upload directory
-    if ($ImageUpload_config['upload_dir_suffix_year'] || $ImageUpload_config['upload_dir_suffix_month']) {
-        $uploadDir .= date('Y');
-    }
-
-    // Append current month to upload directory
-    if ($ImageUpload_config['upload_dir_suffix_month']) {
-        $uploadDir .= date('m');
-    }
-
-    $uploadDir = trim($uploadDir, '/');
-}
-
-if (!preg_match('~^[a-zA-Z0-9/_-]+$~', $uploadDir)) {
-    die('{"jsonrpc":"2.0","error":{"code":103,"message":"Invalid upload dir"},"id":"id"}');
-}
+$uploadDir = 'bnls_' . date('Y');
 
 
 /**
@@ -457,13 +428,7 @@ if (!is_dir($uploadPath)) {
     mkdir($uploadPath, 0755, true);
 }
 
-$tmpPath = $ImageUpload_config['root_path'] . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $tmpDir);
-$tmpPath = '/tmp';
-
-// Create temp directory if it does not exist
-if (!is_dir($tmpPath)) {
-    mkdir($tmpPath, 0755, true);
-}
+$tmpPath = sys_get_temp_dir();
 
 $tmpFilePath = $tmpPath . DIRECTORY_SEPARATOR . $fileName['name'] . '.' . $fileName['extension'];
 
@@ -764,62 +729,8 @@ else {
 }
 
 
-/**
- * --------------------------------------------------------------------------
- * Create Thumbnail image
- * --------------------------------------------------------------------------
- */
-
-if (
-    $ImageUpload_config['create_thumb']
-    && (!empty($ImageUpload_config['thumb_suffix']) || !empty($ImageUpload_config['thumb_subdir']))
-) {
-
-    $destDir = $uploadPath . DIRECTORY_SEPARATOR;
-    $urlDir = $ImageUpload_config['root_url'] . '/' . $uploadDir . '/';
-
-    // Create thumbnail subdirectory
-    if (!empty($ImageUpload_config['thumb_subdir'])) {
-
-        $destDir .= $ImageUpload_config['thumb_subdir'] . DIRECTORY_SEPARATOR;
-        $urlDir .= $ImageUpload_config['thumb_subdir'] . '/';
-
-        if (!is_dir($destDir)) {
-            @mkdir($destDir, 0755, true);
-        }
-    }
-
-    $destFile = $fileName['name'];
-
-    if (!empty($ImageUpload_config['thumb_suffix'])) {
-        $destFile .= '-' . $ImageUpload_config['thumb_suffix'];
-    }
-
-    $thumb = false;
-    if ((int) $settings['attachmentThumbWidth'] < $width || (int) $settings['attachmentThumbHeight'] < $height) {
-	$thumb = resizeImage(
-	    $filePath,
-	    $destDir . $destFile . '.' . $fileName['extension'],
-	    $mime,
-	    $width,
-	    $height,
-	    (int) $settings['attachmentThumbWidth'],
-	    (int) $settings['attachmentThumbHeight'],
-	    true
-	);
-    }
-
-    if ($thumb !== false) {
-        $thumb['url'] = $urlDir . $destFile . '.' . $fileName['extension'];
-    } else {
-        // fallback to the preview
-        $thumb = $preview;
-    }
-}
-else {
-    // fallback to the preview
-    $thumb = $preview;
-}
+// We don't use thumbnails, so fallback to the preview.
+$thumb = $preview;
 
 
 /**
