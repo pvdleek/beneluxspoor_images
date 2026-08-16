@@ -29,9 +29,6 @@ $ImageUpload_config['root_url'] = 'http://localhost:9000';
 // Root path where uploaded files are hosted. No change needed if this script itself is in subdirectory: Sources/
 $ImageUpload_config['root_path'] = '/var/www';
 
-// Subdirectory for uploaded files
-$ImageUpload_config['upload_dir'] = 'bnls_';
-
 // Subdirectory for uploaded temporary chunk files
 $ImageUpload_config['tmp_dir'] = 'tmp';
 

@@ -125,12 +125,7 @@ if ($action == 'pm' && !empty($ImageUpload_config['pm_upload_dir'])) {
 }
 else {
 
-    $uploadDir = ltrim($ImageUpload_config['upload_dir'], '/');
-
-    // Append current year to upload directory
-    $uploadDir .= date('Y');
-
-    $uploadDir = trim($uploadDir, '/');
+    $uploadDir = 'bnls_' . date('Y');
 }
 
 if (!preg_match('~^[a-zA-Z0-9/_-]+$~', $uploadDir)) {
