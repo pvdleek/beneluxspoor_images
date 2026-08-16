@@ -20,7 +20,7 @@ $ImageUpload_config = array();
  */
 
 //!\ Root url where uploaded files are hosted
-$ImageUpload_config['root_url'] = getenv("BNLS_IMAGE_BOARD_URL");
+$ImageUpload_config['root_url'] = getenv("BNLS_IMAGES_BOARD_URL");
 
 // Root path where uploaded files are hosted. No change needed if this script itself is in subdirectory: Sources/
 $ImageUpload_config['root_path'] = '/var/www';
@@ -40,7 +40,7 @@ $ImageUpload_config['allow-origin'] = array(
 );
 
 //!\ Prevent manipulation of settings. Env var should have the same value for both the forum and image site.
-$ImageUpload_config['secret_key'] = getenv("BNLS_IMAGE_UPLOAD_SECRET");
+$ImageUpload_config['secret_key'] = getenv("BNLS_IMAGES_UPLOAD_SECRET");
 
 
 /**
