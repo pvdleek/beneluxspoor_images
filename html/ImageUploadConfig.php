@@ -9,13 +9,11 @@
  * @license AGPLv3 https://www.gnu.org/licenses/agpl-3.0.en.html
  */
 
-/* Note: these settings are just the ones needed on the images server */
-
 $ImageUpload_config = array();
 
 /**
  * --------------------------------------------------------------------------
- * Upload directory
+ * Upload directory, only used on images server
  * --------------------------------------------------------------------------
  */
 
@@ -28,9 +26,12 @@ $ImageUpload_config['root_path'] = '/var/www';
 
 /**
  * --------------------------------------------------------------------------
- * Upload handler
+ * Upload handler (secret_key: both, upload_handler_url: forum, CORS: images)
  * --------------------------------------------------------------------------
  */
+
+// Url that points to the Upload Handler
+$ImageUpload_config['upload_handler_url'] = getenv("BNLS_IMAGES_BOARD_URL") . '/ImageUploadHandler.php';
 
 // CORS: whitelist all (sub)domains that are allowed to send files to the Upload Handler. Use '*' to allow all origins
 $ImageUpload_config['allow-origin'] = array(
@@ -39,32 +40,32 @@ $ImageUpload_config['allow-origin'] = array(
     'https://test.beneluxspoor.net'
 );
 
-//!\ Prevent manipulation of settings. Env var should have the same value for both the forum and image site.
+// Prevent manipulation of settings. Env var should have the same value for both the forum and image site.
 $ImageUpload_config['secret_key'] = getenv("BNLS_IMAGES_UPLOAD_SECRET");
 
 
 /**
- * --------------------------------------------------------------------------
- * Upload parameters
- * --------------------------------------------------------------------------
+ * ----------------------------------------------------------------------------
+ * Upload parameters, used on both the forum and the image server
+ * ----------------------------------------------------------------------------
  */
 
-//!\ Maximum file size (kb/mb/gb, e.g. 10mb)
+// Maximum file size (kb/mb/gb, e.g. 10mb)
 $ImageUpload_config['max_file_size'] = '10mb';
 
 // Maximum number of megapixels (e.g. 40)
 $ImageUpload_config['max_megapixel'] = 40;
 
-//!\ Downscale to maximum width (px, e.g. 1080)
+// Downscale to maximum width (px, e.g. 1080)
 $ImageUpload_config['downscale_width'] = 1800;
 
-//!\ Downscale to maximum height (px, e.g. 1080) Aspect ratio will be preserved
+// Downscale to maximum height (px, e.g. 1080) Aspect ratio will be preserved
 $ImageUpload_config['downscale_height'] = 1800;
 
 
 /**
  * --------------------------------------------------------------------------
- * Filename preferences
+ * Filename preferences, only used on the images server
  * --------------------------------------------------------------------------
  */
 
@@ -83,7 +84,7 @@ $ImageUpload_config['filename_suffix_unique'] = false;
 
 /**
  * --------------------------------------------------------------------------
- * Preview images
+ * Preview images, only used on the images server
  * --------------------------------------------------------------------------
  * maximum dimensions are set in Attachment Settings -> Thumbnail Settings -> posted or attached images
  */
