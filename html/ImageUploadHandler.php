@@ -119,18 +119,7 @@ if (!preg_match('~^[a-zA-Z0-9/_-]+$~', $tmpDir)) {
     die('{"jsonrpc":"2.0","error":{"code":102,"message":"Invalid tmp dir"},"id":"id"}');
 }
 
-if ($action == 'pm' && !empty($ImageUpload_config['pm_upload_dir'])) {
-
-    $uploadDir = trim($ImageUpload_config['pm_upload_dir'], '/');
-}
-else {
-
-    $uploadDir = 'bnls_' . date('Y');
-}
-
-if (!preg_match('~^[a-zA-Z0-9/_-]+$~', $uploadDir)) {
-    die('{"jsonrpc":"2.0","error":{"code":103,"message":"Invalid upload dir"},"id":"id"}');
-}
+$uploadDir = 'bnls_' . date('Y');
 
 
 /**

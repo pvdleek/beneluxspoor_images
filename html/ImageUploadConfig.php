@@ -32,9 +32,6 @@ $ImageUpload_config['root_path'] = '/var/www';
 // Subdirectory for uploaded temporary chunk files
 $ImageUpload_config['tmp_dir'] = 'tmp';
 
-// Subdirectory for uploaded files related to PM's. Leave empty to disable the use of a separate directory
-$ImageUpload_config['pm_upload_dir'] = '';
-
 
 
 /**
