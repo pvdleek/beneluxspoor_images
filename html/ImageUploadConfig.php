@@ -28,7 +28,7 @@ $ImageUpload_config['root_url'] = getenv('BNLS_IMAGES_BOARD_URL');
 $ImageUpload_config['root_path'] = '/var/www';
 
 // Subdirectory for uploaded files
-$ImageUpload_config['upload_dir'] = '';
+$ImageUpload_config['upload_dir'] = 'bnls_';
 
 // Add the current year as suffix to the Upload directory
 $ImageUpload_config['upload_dir_suffix_year'] = true;
