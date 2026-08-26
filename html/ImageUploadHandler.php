@@ -15,7 +15,7 @@
  * Config
  * --------------------------------------------------------------------------
  */
-
+ 
 require 'ImageUploadConfig.php';
 
 
@@ -26,7 +26,7 @@ require 'ImageUploadConfig.php';
  * Prevents browsers (especially mobile browsers like iOS Safari)
  * from caching upload responses.
  */
-
+ 
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 header('Cache-Control: no-store, no-cache, must-revalidate');
@@ -39,18 +39,18 @@ header('Pragma: no-cache');
  * CORS support
  * --------------------------------------------------------------------------
  */
-
+ 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 $allowed = (array) $ImageUpload_config['allow-origin'];
 
 if (in_array('*', $allowed, true)) {
     // Allow all domains
     header('Access-Control-Allow-Origin: *');
-
+    
 } elseif ($origin && in_array($origin, $allowed, true)) {
     // Only allow from whitelisted domains
     header("Access-Control-Allow-Origin: $origin");
-
+    
 }
 
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -113,7 +113,30 @@ $topicId = (int) ($settings['topicid'] ?? 0);
  * --------------------------------------------------------------------------
  */
 
-$uploadDir = 'bnls_' . date('Y');
+if ($action == 'pm' && !empty($ImageUpload_config['pm_upload_dir'])) {
+
+   $uploadDir = trim($ImageUpload_config['pm_upload_dir'], '/');
+}
+else {
+
+   $uploadDir = ltrim($ImageUpload_config['upload_dir'], '/');
+
+   // Append current year to upload directory
+   if ($ImageUpload_config['upload_dir_suffix_year'] || $ImageUpload_config['upload_dir_suffix_month']) {
+       $uploadDir .= date('Y');
+   }
+
+   // Append current month to upload directory
+   if ($ImageUpload_config['upload_dir_suffix_month']) {
+       $uploadDir .= date('m');
+   }
+
+   $uploadDir = trim($uploadDir, '/');
+}
+
+if (!preg_match('~^[a-zA-Z0-9/_-]+$~', $uploadDir)) {
+    die('{"jsonrpc":"2.0","error":{"code":103,"message":"Invalid upload dir"},"id":"id"}');
+}
 
 
 /**
@@ -350,7 +373,7 @@ function resizeImage(
 
             case 'image/webp':
                 imagewebp($dst, $destPath, $quality);
-                break;
+               break;
         }
     }
 
@@ -360,8 +383,8 @@ function resizeImage(
     imagedestroy($dst);
 
     return array(
-        'width'  => $dstWidth,
-        'height' => $dstHeight
+      'width'  => $dstWidth,
+      'height' => $dstHeight
     );
 }
 
@@ -420,15 +443,24 @@ if ($ImageUpload_config['filename_suffix_unique']) {
  * Build paths
  * --------------------------------------------------------------------------
  */
-
+ 
 $uploadPath = $ImageUpload_config['root_path'] . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $uploadDir);
 
 // Create upload directory if it does not exist
 if (!is_dir($uploadPath)) {
-    mkdir($uploadPath, 0755, true);
+    @mkdir($uploadPath, 0755, true);
 }
 
-$tmpPath = sys_get_temp_dir();
+$tmpPath = rtrim($ImageUpload_config['tmp_path'], '/');
+
+if (!preg_match('~^[a-zA-Z0-9/_-]+$~', $tmpPath)) {
+    die('{"jsonrpc":"2.0","error":{"code":102,"message":"Invalid tmp path"},"id":"id"}');
+}
+
+// Create temp directory if it does not exist
+if (!is_dir($tmpPath)) {
+    @mkdir($tmpPath, 0755, true);
+}
 
 $tmpFilePath = $tmpPath . DIRECTORY_SEPARATOR . $fileName['name'] . '.' . $fileName['extension'];
 
@@ -485,10 +517,11 @@ if ($cleanupTmpDir) {
  * --------------------------------------------------------------------------
  */
 
-$out = fopen(
+$out = @fopen(
     "{$tmpFilePath}.part",
     $chunks ? 'ab' : 'wb'
 );
+
 if (!$out) {
     die('{"jsonrpc":"2.0","error":{"code":106,"message":"Failed to open output stream."},"id":"id"}');
 }
@@ -639,19 +672,19 @@ if ($width * $height > $ImageUpload_config['max_megapixel'] * 1000000) {
  */
 
 $file = resizeImage(
-    $tmpFilePath,
-    $filePath,
-    $mime,
-    $width,
-    $height,
-    (int) $ImageUpload_config['downscale_width'],
-    (int) $ImageUpload_config['downscale_height']
+	$tmpFilePath,
+	$filePath,
+	$mime,
+	$width,
+	$height,
+	(int) $ImageUpload_config['downscale_width'],
+	(int) $ImageUpload_config['downscale_height']
 );
 
 unlink($tmpFilePath);
 
 if ($file === false) {
-    die('{"jsonrpc":"2.0","error":{"code":113,"message":"Image corrupt"},"id":"id"}');
+	die('{"jsonrpc":"2.0","error":{"code":113,"message":"Image corrupt"},"id":"id"}');
 }
 
 $width = $file['width'];
@@ -665,7 +698,7 @@ $height = $file['height'];
  * --------------------------------------------------------------------------
  */
 
-$file['url'] = $ImageUpload_config['root_url'] . '/' . $uploadDir . '/' . $fileName['name'] . '.' . $fileName['extension'];
+$file['url'] = 'https://' . $_SERVER['HTTP_HOST'] . '/' . $uploadDir . '/' . $fileName['name'] . '.' . $fileName['extension'];
 $file['width'] = $width;
 $file['height'] = $height;
 
@@ -677,7 +710,7 @@ $file['height'] = $height;
  */
 
 if (
-    $ImageUpload_config['create_preview_image']
+    $ImageUpload_config['create_preview_image']  
     && (!empty($ImageUpload_config['preview_image_suffix']) || !empty($ImageUpload_config['preview_image_subdir']))
     && ($width > $settings['max_image_width'] * 1.2 || $height > $settings['max_image_height'] * 1.2)
 ) {
@@ -703,19 +736,19 @@ if (
         $destFile .= '-' . $ImageUpload_config['preview_image_suffix'];
     }
 
-    $preview = false;
+	$preview = false;
     if ((int) $settings['max_image_width'] < $width || (int) $settings['max_image_height'] < $height) {
-	$preview = resizeImage(
-	    $filePath,
-	    $destDir . $destFile . '.' . $fileName['extension'],
-	    $mime,
-	    $width,
-	    $height,
-	    (int) $settings['max_image_width'],
-	    (int) $settings['max_image_height']
-	);
-    }
-
+		$preview = resizeImage(
+			$filePath,
+			$destDir . $destFile . '.' . $fileName['extension'],
+			$mime,
+			$width,
+			$height,
+			(int) $settings['max_image_width'],
+			(int) $settings['max_image_height']
+		);
+	}
+      
     if ($preview !== false) {
         $preview['url'] = $urlDir . $destFile . '.' . $fileName['extension'];
     } else {
@@ -729,8 +762,62 @@ else {
 }
 
 
-// We don't use thumbnails, so fallback to the preview.
-$thumb = $preview;
+/**
+ * --------------------------------------------------------------------------
+ * Create Thumbnail image
+ * --------------------------------------------------------------------------
+ */
+
+if (
+    $ImageUpload_config['create_thumb']
+    && (!empty($ImageUpload_config['thumb_suffix']) || !empty($ImageUpload_config['thumb_subdir']))
+) {
+
+    $destDir = $uploadPath . DIRECTORY_SEPARATOR;
+    $urlDir = $ImageUpload_config['root_url'] . '/' . $uploadDir . '/';
+
+    // Create thumbnail subdirectory
+    if (!empty($ImageUpload_config['thumb_subdir'])) {
+
+        $destDir .= $ImageUpload_config['thumb_subdir'] . DIRECTORY_SEPARATOR;
+        $urlDir .= $ImageUpload_config['thumb_subdir'] . '/';
+
+        if (!is_dir($destDir)) {
+            @mkdir($destDir, 0755, true);
+        }
+    }
+
+    $destFile = $fileName['name'];
+
+    if (!empty($ImageUpload_config['thumb_suffix'])) {
+        $destFile .= '-' . $ImageUpload_config['thumb_suffix'];
+    }
+
+	$thumb = false;
+    if ((int) $settings['attachmentThumbWidth'] < $width || (int) $settings['attachmentThumbHeight'] < $height) {
+		$thumb = resizeImage(
+			$filePath,
+			$destDir . $destFile . '.' . $fileName['extension'],
+			$mime,
+			$width,
+			$height,
+			(int) $settings['attachmentThumbWidth'],
+			(int) $settings['attachmentThumbHeight'],
+			true
+		);
+	}
+      
+    if ($thumb !== false) {
+        $thumb['url'] = $urlDir . $destFile . '.' . $fileName['extension'];
+    } else {
+        // fallback to the preview
+        $thumb = $preview;
+    }
+}
+else {
+    // fallback to the preview
+    $thumb = $preview;
+}
 
 
 /**

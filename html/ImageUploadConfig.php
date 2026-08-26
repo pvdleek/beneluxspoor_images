@@ -9,63 +9,83 @@
  * @license AGPLv3 https://www.gnu.org/licenses/agpl-3.0.en.html
  */
 
-$ImageUpload_config = array();
+
+
+//!\ Settings with this marking are used in both ImageUpload.php and ImageUploadHandler.php
+
+
 
 /**
  * --------------------------------------------------------------------------
- * Upload directory, only used on images server
+ * Upload directory
  * --------------------------------------------------------------------------
  */
 
 //!\ Root url where uploaded files are hosted
-$ImageUpload_config['root_url'] = getenv("BNLS_IMAGES_BOARD_URL");
+$ImageUpload_config['root_url'] = getenv('BNLS_IMAGES_BOARD_URL');
 
 // Root path where uploaded files are hosted. No change needed if this script itself is in subdirectory: Sources/
 $ImageUpload_config['root_path'] = '/var/www';
 
+// Subdirectory for uploaded files
+$ImageUpload_config['upload_dir'] = '';
+
+// Add the current year as suffix to the Upload directory
+$ImageUpload_config['upload_dir_suffix_year'] = true;
+
+// Add the current month as suffix to the Upload directory
+$ImageUpload_config['upload_dir_suffix_month'] = false;
+
+// Subdirectory for uploaded files related to PM's. Leave empty to disable the use of a separate directory
+$ImageUpload_config['pm_upload_dir'] = '';
+
+// Root path for uploaded temporary chunk files
+$ImageUpload_config['tmp_path'] = sys_get_temp_dir();
+
+
 
 /**
  * --------------------------------------------------------------------------
- * Upload handler (secret_key: both, upload_handler_url: forum, CORS: images)
+ * Upload handler
  * --------------------------------------------------------------------------
  */
 
-// Url that points to the Upload Handler
-$ImageUpload_config['upload_handler_url'] = getenv("BNLS_IMAGES_BOARD_URL") . '/ImageUploadHandler.php';
+//!\ Url that points to the Upload Handler
+$ImageUpload_config['upload_handler_url'] = getenv('BNLS_IMAGES_BOARD_URL') . '/ImageUploadHandler.php';
 
 // CORS: whitelist all (sub)domains that are allowed to send files to the Upload Handler. Use '*' to allow all origins
 $ImageUpload_config['allow-origin'] = array(
-    'http://localhost:8000',
-    'https://forum.beneluxspoor.net',
-    'https://test.beneluxspoor.net'
+   'http://localhost:8000',
+   'https://forum.beneluxspoor.net',
+   'https://test.beneluxspoor.net'
 );
 
-// Prevent manipulation of settings. Env var should have the same value for both the forum and image site.
-$ImageUpload_config['secret_key'] = getenv("BNLS_IMAGES_UPLOAD_SECRET");
+//!\ Prevent manipulation of settings. Change this to something unique
+$ImageUpload_config['secret_key'] = getenv('BNLS_IMAGES_UPLOAD_SECRET');
 
 
 /**
- * ----------------------------------------------------------------------------
- * Upload parameters, used on both the forum and the image server
- * ----------------------------------------------------------------------------
+ * --------------------------------------------------------------------------
+ * Upload parameters
+ * --------------------------------------------------------------------------
  */
 
-// Maximum file size (kb/mb/gb, e.g. 10mb)
+//!\ Maximum file size (kb/mb/gb, e.g. 10mb)
 $ImageUpload_config['max_file_size'] = '10mb';
 
 // Maximum number of megapixels (e.g. 40)
 $ImageUpload_config['max_megapixel'] = 40;
 
-// Downscale to maximum width (px, e.g. 1080)
+//!\ Downscale to maximum width (px, e.g. 1080)
 $ImageUpload_config['downscale_width'] = 1800;
 
-// Downscale to maximum height (px, e.g. 1080) Aspect ratio will be preserved
+//!\ Downscale to maximum height (px, e.g. 1080) Aspect ratio will be preserved
 $ImageUpload_config['downscale_height'] = 1800;
 
 
 /**
  * --------------------------------------------------------------------------
- * Filename preferences, only used on the images server
+ * Filename preferences
  * --------------------------------------------------------------------------
  */
 
@@ -84,7 +104,24 @@ $ImageUpload_config['filename_suffix_unique'] = false;
 
 /**
  * --------------------------------------------------------------------------
- * Preview images, only used on the images server
+ * Thumbnails
+ * --------------------------------------------------------------------------
+ * maximum dimensions are set in Attachment Settings -> Thumbnail Settings -> thumbnails
+*/
+
+// Create thumbnail image
+$ImageUpload_config['create_thumb'] = false;
+
+// Add a suffix to the thumbnail filename
+$ImageUpload_config['thumb_suffix'] = 't';
+
+// Save thumbnails in this subdirectory
+$ImageUpload_config['thumb_subdir'] = '';
+
+
+/**
+ * --------------------------------------------------------------------------
+ * Preview images
  * --------------------------------------------------------------------------
  * maximum dimensions are set in Attachment Settings -> Thumbnail Settings -> posted or attached images
  */
