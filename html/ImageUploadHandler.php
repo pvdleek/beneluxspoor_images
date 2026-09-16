@@ -712,49 +712,55 @@ $file['height'] = $height;
 if (
     $ImageUpload_config['create_preview_image']  
     && (!empty($ImageUpload_config['preview_image_suffix']) || !empty($ImageUpload_config['preview_image_subdir']))
-    && ($width > $settings['max_image_width'] * 1.2 || $height > $settings['max_image_height'] * 1.2)
-) {
+) {	 
 
-    $destDir = $uploadPath . DIRECTORY_SEPARATOR;
-    $urlDir = $ImageUpload_config['root_url'] . '/' . $uploadDir . '/';
+	$destDir = $uploadPath . DIRECTORY_SEPARATOR;
+	$urlDir = $ImageUpload_config['root_url'] . '/' . $uploadDir . '/';
 
-    // Create preview image subdirectory
-    if (!empty($ImageUpload_config['preview_image_subdir'])) {
+	// Create preview image subdirectory
+	if (!empty($ImageUpload_config['preview_image_subdir'])) {
 
-        $destDir .= $ImageUpload_config['preview_image_subdir'] . DIRECTORY_SEPARATOR;
+		$destDir .= $ImageUpload_config['preview_image_subdir'] . DIRECTORY_SEPARATOR;
+		$urlDir .= $ImageUpload_config['preview_image_subdir'] . '/';
 
-        $urlDir .= $ImageUpload_config['preview_image_subdir'] . '/';
-
-        if (!is_dir($destDir)) {
-            @mkdir($destDir, 0755, true);
-        }
-    }
-
-    $destFile = $fileName['name'];
-
-    if (!empty($ImageUpload_config['preview_image_suffix'])) {
-        $destFile .= '-' . $ImageUpload_config['preview_image_suffix'];
-    }
-
-	$preview = false;
-    if ((int) $settings['max_image_width'] < $width || (int) $settings['max_image_height'] < $height) {
-		$preview = resizeImage(
-			$filePath,
-			$destDir . $destFile . '.' . $fileName['extension'],
-			$mime,
-			$width,
-			$height,
-			(int) $settings['max_image_width'],
-			(int) $settings['max_image_height']
-		);
+		if (!is_dir($destDir)) {
+			@mkdir($destDir, 0755, true);
+		}
 	}
-      
-    if ($preview !== false) {
-        $preview['url'] = $urlDir . $destFile . '.' . $fileName['extension'];
-    } else {
-        // fallback to the file
-        $preview = $file;
-    }
+
+	$destFile = $fileName['name'];
+
+	if (!empty($ImageUpload_config['preview_image_suffix'])) {
+		$destFile .= '-' . $ImageUpload_config['preview_image_suffix'];
+	}
+	
+	if(file_exists($destDir . $destFile . '.' . $fileName['extension'])) {
+		unlink($destDir . $destFile . '.' . $fileName['extension']);
+	}
+	
+	if (($width > $settings['max_image_width'] * 1.2 || $height > $settings['max_image_height'] * 1.2)) {
+	
+		$preview = false;
+		if ((int) $settings['max_image_width'] < $width || (int) $settings['max_image_height'] < $height) {
+			$preview = resizeImage(
+				$filePath,
+				$destDir . $destFile . '.' . $fileName['extension'],
+				$mime,
+				$width,
+				$height,
+				(int) $settings['max_image_width'],
+				(int) $settings['max_image_height']
+			);
+		}
+			
+		if ($preview !== false) {
+			$preview['url'] = $urlDir . $destFile . '.' . $fileName['extension'];
+		} else {
+			// fallback to the file
+			$preview = $file;
+		}
+	}
+
 }
 else {
     // fallback to the file
@@ -793,6 +799,10 @@ if (
         $destFile .= '-' . $ImageUpload_config['thumb_suffix'];
     }
 
+	if(file_exists($destDir . $destFile . '.' . $fileName['extension'])) {
+		unlink($destDir . $destFile . '.' . $fileName['extension']);
+	}
+	
 	$thumb = false;
     if ((int) $settings['attachmentThumbWidth'] < $width || (int) $settings['attachmentThumbHeight'] < $height) {
 		$thumb = resizeImage(
@@ -807,16 +817,16 @@ if (
 		);
 	}
       
-    if ($thumb !== false) {
-        $thumb['url'] = $urlDir . $destFile . '.' . $fileName['extension'];
-    } else {
-        // fallback to the preview
-        $thumb = $preview;
-    }
+	if ($thumb !== false) {
+		$thumb['url'] = $urlDir . $destFile . '.' . $fileName['extension'];
+	} else {
+		// fallback to the preview
+		$thumb = $preview;
+	}
 }
 else {
-    // fallback to the preview
-    $thumb = $preview;
+	// fallback to the preview
+	$thumb = $preview;
 }
 
 
