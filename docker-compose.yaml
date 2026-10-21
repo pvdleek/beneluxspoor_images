@@ -17,10 +17,6 @@ services:
     build: .
     environment:
       APP_ENV: "prod"
-      ENV_SUBSTITUTION_ENABLE: "true"
-      PHP_MEMORY_LIMIT: "512M"
-      PHP_FPM_LISTEN: 9090
-      PHP_SESSION_GC_MAXLIFETIME: 7200
     volumes:
       - /home/peter/git/server-configuration/_configuration/timezone.ini:/usr/local/etc/php/conf.d/timezone.ini
       - /home/peter/git/server-configuration/_configuration/timezone:/etc/timezone:ro

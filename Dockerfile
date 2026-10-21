@@ -1,17 +1,18 @@
-FROM joseluisq/php-fpm:8.5
-
-RUN apk add gcc make autoconf libc-dev pkgconfig imagemagick-dev imagemagick
+FROM php:8.5.12-fpm-alpine
 
 WORKDIR /var/www
 
-RUN apk add --no-cache tzdata
+# PHP extensions needed by the application that aren't in the official image by default.
+RUN apk add --no-cache tzdata imagemagick imagemagick-libs \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS imagemagick-dev \
+    && pecl install imagick \
+    && docker-php-ext-enable imagick \
+    && apk del .build-deps
+RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
+    && printf 'memory_limit = 512M\nsession.gc_maxlifetime = 7200\n' > "$PHP_INI_DIR/conf.d/bnls-images.ini"
+
 ENV TZ=Europe/Amsterdam
 ENV COMPOSER_ALLOW_SUPERUSER=1
-ENV PHP_DISABLE_EXTENSIONS=psr
-# The secret below is also used by the forum (they should be in sync)
-ENV BNLS_IMAGES_UPLOAD_SECRET="from-compose"
-# The board url is only used for building the absolute url to an uploaded image.
-ENV BNLS_IMAGES_BOARD_URL="from-compose"
 
 COPY .env ./
 COPY composer.json ./
@@ -28,9 +29,7 @@ COPY translations translations/
 RUN php composer.phar install --no-plugins --no-scripts
 RUN php composer.phar dump-autoload --no-dev --classmap-authoritative
 
-# /entrypoint.sh instead of php because /entrypoint.sh disables the psr extension.
-RUN /entrypoint.sh bin/console cache:clear --env=prod
-RUN /entrypoint.sh bin/console assets:install html --env=prod
 RUN php bin/console cache:clear --env=prod
+RUN php bin/console assets:install html --env=prod
 
 RUN chown -R www-data:www-data *
