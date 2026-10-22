@@ -11,7 +11,7 @@ RUN apk add --no-cache tzdata imagemagick imagemagick-libs libpng libjpeg-turbo 
     && docker-php-ext-enable imagick \
     && apk del .build-deps
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
-    && printf 'memory_limit = 512M\nsession.gc_maxlifetime = 7200\n' > "$PHP_INI_DIR/conf.d/bnls-images.ini"
+    && printf 'memory_limit = 512M\nsession.gc_maxlifetime = 7200\nupload_max_filesize = 12M\npost_max_size = 16M\n' > "$PHP_INI_DIR/conf.d/bnls-images.ini"
 
 ENV TZ=Europe/Amsterdam
 ENV COMPOSER_ALLOW_SUPERUSER=1
