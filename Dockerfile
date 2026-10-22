@@ -3,8 +3,10 @@ FROM php:8.5.12-fpm-alpine
 WORKDIR /var/www
 
 # PHP extensions needed by the application that aren't in the official image by default.
-RUN apk add --no-cache tzdata imagemagick imagemagick-libs \
-    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS imagemagick-dev \
+RUN apk add --no-cache tzdata imagemagick imagemagick-libs libpng libjpeg-turbo libwebp freetype \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS imagemagick-dev libpng-dev libjpeg-turbo-dev libwebp-dev freetype-dev \
+    && docker-php-ext-configure gd --with-jpeg --with-webp --with-freetype \
+    && docker-php-ext-install -j"$(nproc)" gd \
     && pecl install imagick \
     && docker-php-ext-enable imagick \
     && apk del .build-deps

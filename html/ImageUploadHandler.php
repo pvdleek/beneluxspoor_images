@@ -187,12 +187,20 @@ function safeFilename(string $filename): array
     $info = pathinfo(strtolower($filename));
     $name = $info['filename'];
 
+    // Filenames from some clients are not valid UTF-8 (e.g. Windows-1252), which makes iconv fail
+    if (!\mb_check_encoding($name, 'UTF-8')) {
+        $name = \mb_convert_encoding($name, 'UTF-8', 'Windows-1252');
+    }
+
     // Convert UTF-8 characters to ASCII
-    $name = iconv('UTF-8', 'ASCII//TRANSLIT', $name);
+    $name = (string) @\iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $name);
+
+    // musl (Alpine) transliterates accents as separate marks, e.g. "é" becomes "'e"
+    $name = \strtolower(\str_replace(["'", '"', '`', '^', '~'], '', $name));
 
     // Replace all non-alphanumeric characters with underscores
-    $name = preg_replace('/[^a-z0-9]+/', '_', $name);
-    $name = trim($name, '_');
+    $name = \preg_replace('/[^a-z0-9]+/', '_', $name);
+    $name = \trim($name, '_');
 
     // Fallback filename
     $name = empty($name) ? 'file' : $name;
