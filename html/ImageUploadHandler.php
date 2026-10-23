@@ -15,7 +15,7 @@
  * Config
  * --------------------------------------------------------------------------
  */
- 
+
 require 'ImageUploadConfig.php';
 
 
@@ -26,7 +26,7 @@ require 'ImageUploadConfig.php';
  * Prevents browsers (especially mobile browsers like iOS Safari)
  * from caching upload responses.
  */
- 
+
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 header('Cache-Control: no-store, no-cache, must-revalidate');
@@ -39,18 +39,18 @@ header('Pragma: no-cache');
  * CORS support
  * --------------------------------------------------------------------------
  */
- 
+
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 $allowed = (array) $ImageUpload_config['allow-origin'];
 
 if (in_array('*', $allowed, true)) {
     // Allow all domains
     header('Access-Control-Allow-Origin: *');
-    
+
 } elseif ($origin && in_array($origin, $allowed, true)) {
     // Only allow from whitelisted domains
     header("Access-Control-Allow-Origin: $origin");
-    
+
 }
 
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -187,20 +187,12 @@ function safeFilename(string $filename): array
     $info = pathinfo(strtolower($filename));
     $name = $info['filename'];
 
-    // Filenames from some clients are not valid UTF-8 (e.g. Windows-1252), which makes iconv fail
-    if (!\mb_check_encoding($name, 'UTF-8')) {
-        $name = \mb_convert_encoding($name, 'UTF-8', 'Windows-1252');
-    }
-
     // Convert UTF-8 characters to ASCII
-    $name = (string) @\iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $name);
-
-    // musl (Alpine) transliterates accents as separate marks, e.g. "é" becomes "'e"
-    $name = \strtolower(\str_replace(["'", '"', '`', '^', '~'], '', $name));
+    $name = iconv('UTF-8', 'ASCII//TRANSLIT', $name);
 
     // Replace all non-alphanumeric characters with underscores
-    $name = \preg_replace('/[^a-z0-9]+/', '_', $name);
-    $name = \trim($name, '_');
+    $name = preg_replace('/[^a-z0-9]+/', '_', $name);
+    $name = trim($name, '_');
 
     // Fallback filename
     $name = empty($name) ? 'file' : $name;
@@ -451,7 +443,7 @@ if ($ImageUpload_config['filename_suffix_unique']) {
  * Build paths
  * --------------------------------------------------------------------------
  */
- 
+
 $uploadPath = $ImageUpload_config['root_path'] . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $uploadDir);
 
 // Create upload directory if it does not exist
@@ -717,10 +709,11 @@ $file['height'] = $height;
  * --------------------------------------------------------------------------
  */
 
+$preview = $file; // fallback
 if (
-    $ImageUpload_config['create_preview_image']  
+    $ImageUpload_config['create_preview_image']
     && (!empty($ImageUpload_config['preview_image_suffix']) || !empty($ImageUpload_config['preview_image_subdir']))
-) {	 
+) {
 
 	$destDir = $uploadPath . DIRECTORY_SEPARATOR;
 	$urlDir = $ImageUpload_config['root_url'] . '/' . $uploadDir . '/';
@@ -741,38 +734,27 @@ if (
 	if (!empty($ImageUpload_config['preview_image_suffix'])) {
 		$destFile .= '-' . $ImageUpload_config['preview_image_suffix'];
 	}
-	
+
 	if(file_exists($destDir . $destFile . '.' . $fileName['extension'])) {
 		unlink($destDir . $destFile . '.' . $fileName['extension']);
 	}
-	
+
 	if (($width > $settings['max_image_width'] * 1.2 || $height > $settings['max_image_height'] * 1.2)) {
-	
-		$preview = false;
-		if ((int) $settings['max_image_width'] < $width || (int) $settings['max_image_height'] < $height) {
-			$preview = resizeImage(
-				$filePath,
-				$destDir . $destFile . '.' . $fileName['extension'],
-				$mime,
-				$width,
-				$height,
-				(int) $settings['max_image_width'],
-				(int) $settings['max_image_height']
-			);
-		}
-			
-		if ($preview !== false) {
+		$resized = resizeImage(
+			$filePath,
+			$destDir . $destFile . '.' . $fileName['extension'],
+			$mime,
+			$width,
+			$height,
+			(int) $settings['max_image_width'],
+			(int) $settings['max_image_height']
+		);
+
+		if (is_array($resized)) {
+			$preview = $resized;
 			$preview['url'] = $urlDir . $destFile . '.' . $fileName['extension'];
-		} else {
-			// fallback to the file
-			$preview = $file;
 		}
 	}
-
-}
-else {
-    // fallback to the file
-    $preview = $file;
 }
 
 
@@ -782,6 +764,7 @@ else {
  * --------------------------------------------------------------------------
  */
 
+$thumb = $preview; // fallback
 if (
     $ImageUpload_config['create_thumb']
     && (!empty($ImageUpload_config['thumb_suffix']) || !empty($ImageUpload_config['thumb_subdir']))
@@ -810,10 +793,9 @@ if (
 	if(file_exists($destDir . $destFile . '.' . $fileName['extension'])) {
 		unlink($destDir . $destFile . '.' . $fileName['extension']);
 	}
-	
-	$thumb = false;
-    if ((int) $settings['attachmentThumbWidth'] < $width || (int) $settings['attachmentThumbHeight'] < $height) {
-		$thumb = resizeImage(
+
+   if ((int) $settings['attachmentThumbWidth'] < $width || (int) $settings['attachmentThumbHeight'] < $height) {
+		$resized = resizeImage(
 			$filePath,
 			$destDir . $destFile . '.' . $fileName['extension'],
 			$mime,
@@ -823,18 +805,12 @@ if (
 			(int) $settings['attachmentThumbHeight'],
 			true
 		);
+
+		if (is_array($resized)) {
+			$thumb = $resized;
+			$thumb['url'] = $urlDir . $destFile . '.' . $fileName['extension'];
+		}
 	}
-      
-	if ($thumb !== false) {
-		$thumb['url'] = $urlDir . $destFile . '.' . $fileName['extension'];
-	} else {
-		// fallback to the preview
-		$thumb = $preview;
-	}
-}
-else {
-	// fallback to the preview
-	$thumb = $preview;
 }
 
 
