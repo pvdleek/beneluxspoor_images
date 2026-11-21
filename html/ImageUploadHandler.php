@@ -223,6 +223,109 @@ function decodeBase36(string $str)
 
 
 /**
+ * Copy selected text metadata into a JPEG EXIF segment.
+ * Supported fields: ImageDescription, Artist, Copyright.
+ */
+function writeBasicJpegExif(string $path, array $metadata): bool
+{
+    if (!is_file($path)) {
+        return false;
+    }
+
+    // EXIF/TIFF tag IDs, sorted numerically.
+    $tags = [
+        0x010E => 'ImageDescription',
+        0x013B => 'Artist',
+        0x8298 => 'Copyright',
+    ];
+
+    $entries = [];
+
+    foreach ($tags as $tag => $name) {
+        if (!isset($metadata[$name]) || !is_string($metadata[$name])) {
+            continue;
+        }
+
+        $value = trim($metadata[$name]);
+
+        if ($value === '') {
+            continue;
+        }
+
+        // TIFF ASCII fields must end with a null byte.
+        $entries[] = [
+            'tag'  => $tag,
+            'data' => $value . "\0",
+        ];
+    }
+
+    if (!$entries) {
+        return true;
+    }
+
+    $count = count($entries);
+    $ifdOffset = 8;
+    $dataOffset = $ifdOffset + 2 + ($count * 12) + 4;
+
+    // Little-endian TIFF header.
+    $tiff = "II" . pack('v', 42) . pack('V', $ifdOffset);
+
+    $tiff .= pack('v', $count);
+    $extraData = '';
+
+    foreach ($entries as $entry) {
+        $data = $entry['data'];
+        $length = strlen($data);
+
+        $tiff .= pack('v', $entry['tag']);
+        $tiff .= pack('v', 2); // TIFF ASCII type
+        $tiff .= pack('V', $length);
+
+        if ($length <= 4) {
+            $tiff .= str_pad($data, 4, "\0");
+        } else {
+            $tiff .= pack('V', $dataOffset + strlen($extraData));
+            $extraData .= $data;
+        }
+    }
+
+    // No next IFD.
+    $tiff .= pack('V', 0);
+    $tiff .= $extraData;
+
+    $payload = "Exif\0\0" . $tiff;
+    $segmentLength = strlen($payload) + 2;
+
+    // JPEG APP1 segments have a 16-bit length.
+    if ($segmentLength > 65535) {
+        return false;
+    }
+
+    $jpeg = file_get_contents($path);
+
+    if (
+        $jpeg === false ||
+        substr($jpeg, 0, 2) !== "\xFF\xD8"
+    ) {
+        return false;
+    }
+
+    // Insert the EXIF APP1 segment after the JPEG SOI marker.
+    $segment = "\xFF\xE1"
+        . pack('n', $segmentLength)
+        . $payload;
+
+    $result = file_put_contents(
+        $path,
+        substr($jpeg, 0, 2) . $segment . substr($jpeg, 2),
+        LOCK_EX
+    );
+
+    return $result !== false;
+}
+
+
+/**
  * Create thumbnail or resized image.
  */
 function resizeImage(
@@ -264,6 +367,98 @@ function resizeImage(
         return false;
     }
 
+    // Apply EXIF orientation to JPEG images.
+    if ($mime === "image/jpeg" && function_exists("exif_read_data")) {
+        //$exif = @exif_read_data($srcPath);
+        $exif = @exif_read_data($srcPath, 'IFD0', true);
+
+        if (is_array($exif)) {
+            $orientation = (int) ($exif["Orientation"] ?? 1);
+            switch ($orientation) {
+                case 2:
+                    imageflip($src, IMG_FLIP_HORIZONTAL);
+                    break;
+
+                case 3:
+                    $rotated = imagerotate($src, 180, 0);
+                    if ($rotated !== false) {
+                        imagedestroy($src);
+                        $src = $rotated;
+                    }
+                    break;
+
+                case 4:
+                    imageflip($src, IMG_FLIP_VERTICAL);
+                    break;
+
+                case 5:
+                    $rotated = imagerotate($src, 270, 0);
+                    if ($rotated !== false) {
+                        imagedestroy($src);
+                        $src = $rotated;
+                        imageflip($src, IMG_FLIP_HORIZONTAL);
+                    }
+                    break;
+
+                case 6:
+                    $rotated = imagerotate($src, 270, 0);
+                    if ($rotated !== false) {
+                        imagedestroy($src);
+                        $src = $rotated;
+                    }
+                    break;
+
+                case 7:
+                    $rotated = imagerotate($src, 90, 0);
+                    if ($rotated !== false) {
+                        imagedestroy($src);
+                        $src = $rotated;
+                        imageflip($src, IMG_FLIP_HORIZONTAL);
+                    }
+                    break;
+
+                case 8:
+                    $rotated = imagerotate($src, 90, 0);
+                    if ($rotated !== false) {
+                        imagedestroy($src);
+                        $src = $rotated;
+                    }
+                    break;
+            }
+
+            $limits = [
+                'ImageDescription' => 1000,
+                'Artist'           => 255,
+                'Copyright'        => 500
+            ];
+
+            foreach ($limits as $field => $maxLength) {
+
+                $value = $exif['IFD0'][$field] ?? '';
+
+                if (!is_string($value)) {
+                    continue;
+                }
+
+                // Remove control characters, including NULL bytes.
+                $value = preg_replace('/[\x00-\x1F\x7F]/', '', $value);
+
+                // Remove leading and trailing whitespace.
+                $value = trim($value);
+
+                // Limit metadata length.
+                $value = substr($value, 0, $maxLength);
+
+                if ($value !== '') {
+                    $metadata[$field] = $value;
+                }
+            }
+        }
+    }
+
+    // Use the actual dimensions after applying orientation.
+    $width = imagesx($src);
+    $height = imagesy($src);
 
     // Calculate destination dimensions
     if ($crop) {
@@ -361,6 +556,9 @@ function resizeImage(
 
             case 'image/jpeg':
                 imagejpeg($dst, $destPath, $quality);
+                if (!empty($metadata)) {
+                    writeBasicJpegExif($destPath, $metadata);
+                }
                 break;
 
             case 'image/png':
@@ -376,7 +574,6 @@ function resizeImage(
                break;
         }
     }
-
 
     // Cleanup memory
     imagedestroy($src);
